@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Livestock Farmers Community</title>
+    <script src="https://cdn.syncfusion.com/ej2/25.2.6/dist/ej2.min.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f5f0;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        .forum, .chat, .dashboard, .resources, .calendar {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .e-grid .e-row:hover {
+            background: #e0f7fa;
+        }
+        .e-chat .e-user-status.e-online {
+            color: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Livestock Farmers Community</h1>
+
+        <!-- Forum Section -->
+        <div class="forum">
+            <h2>Community Forum</h2>
+            <div id="forumGrid"></div>
+            <script>
+                var forumData = [
+                    { id: 1, topic: "Best Feeding Practices", posts: 15, author: "JohnDoe", date: "2025-05-10" },
+                    { id: 2, topic: "Disease Prevention Tips", posts: 8, author: "JaneSmith", date: "2025-05-09" }
+                ];
+                var grid = new ej.grids.Grid({
+                    dataSource: forumData,
+                    columns: [
+                        { field: 'id', headerText: 'ID', width: 70 },
+                        { field: 'topic', headerText: 'Topic', width: 200 },
+                        { field: 'posts', headerText: 'Posts', width: 100 },
+                        { field: 'author', headerText: 'Author', width: 150 },
+                        { field: 'date', headerText: 'Date', width: 150, format: 'yyyy-MM-dd' }
+                    ],
+                    height: 200
+                });
+                grid.appendTo('#forumGrid');
+            </script>
+        </div>
+
+        <!-- Chat Section -->
+        <div class="chat">
+            <h2>Live Chat</h2>
+            <div id="chat"></div>
+            <script>
+                var chat = new ej.chat.Chat({
+                    height: 300,
+                    user: { id: 'me', name: 'You', avatar: '' },
+                    items: [
+                        { message: 'Hello, any tips on calf rearing?', time: new Date(), user: { id: 'user1', name: 'FarmExpert' } }
+                    ]
+                });
+                chat.appendTo('#chat');
+            </script>
+        </div>
+
+        <!-- Analytics Dashboard -->
+        <div class="dashboard">
+            <h2>Livestock Analytics</h2>
+            <div id="chart"></div>
+            <script>
+                var chart = new ej.charts.Chart({
+                    primaryXAxis: { valueType: 'Category', title: 'Month' },
+                    primaryYAxis: { title: 'Weight (kg)' },
+                    series: [{
+                        dataSource: [{ x: 'Jan', y: 100 }, { x: 'Feb', y: 120 }, { x: 'Mar', y: 130 }],
+                        xName: 'x', yName: 'y', type: 'Line'
+                    }],
+                    title: 'Average Cattle Weight'
+                }, '#chart');
+            </script>
+        </div>
+
+        <!-- Resource Library -->
+        <div class="resources">
+            <h2>Resources</h2>
+            <div id="treeview"></div>
+            <script>
+                var treeview = new ej.navigations.TreeView({
+                    fields: { dataSource: [{ id: 1, name: 'Guides', expanded: true, child: [{ id: 2, name: 'Feeding' }, { id: 3, name: 'Health' }] }], id: 'id', text: 'name', child: 'child' }
+                });
+                treeview.appendTo('#treeview');
+            </script>
+        </div>
+
+        <!-- Event Calendar -->
+        <div class="calendar">
+            <h2>Events</h2>
+            <div id="schedule"></div>
+            <script>
+                var schedule = new ej.schedule.Schedule({
+                    height: 500,
+                    selectedDate: new Date(2025, 4, 11),
+                    eventSettings: { dataSource: [{ Id: 1, Subject: 'Webinar on Sheep Rearing', StartTime: new Date(2025, 4, 15), EndTime: new Date(2025, 4, 15, 1) }] }
+                });
+                schedule.appendTo('#schedule');
+            </script>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

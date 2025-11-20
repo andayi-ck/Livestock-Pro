@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LivestockPro - Smart Livestock Analytics Platform</title>
+    <meta name="description" content="Comprehensive livestock management platform for vaccination schedules, health monitoring, feed management, and growth analytics.">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        background: 'hsl(40 20% 97%)',
+                        foreground: 'hsl(95 40% 15%)',
+                        card: 'hsl(0 0% 100%)',
+                        'card-foreground': 'hsl(95 40% 15%)',
+                        primary: 'hsl(95 45% 25%)',
+                        'primary-foreground': 'hsl(40 20% 97%)',
+                        secondary: 'hsl(85 35% 65%)',
+                        'secondary-foreground': 'hsl(95 40% 15%)',
+                        muted: 'hsl(40 15% 92%)',
+                        'muted-foreground': 'hsl(95 20% 45%)',
+                        accent: 'hsl(110 55% 45%)',
+                        'accent-foreground': 'hsl(0 0% 100%)',
+                        border: 'hsl(40 20% 88%)',
+                    },
+                    fontFamily: {
+                        'poppins': ['Poppins', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(40 20% 97%);
+            color: hsl(95 40% 15%);
+        }
+
+        /* ============================================
+           EVENT SECTION HERO GRADIENT
+           Used for the events header banner
+           CUSTOMIZATION: Change hsl values for different colors
+           - First value (95): Hue (0-360)
+           - Second value (45%): Saturation (0-100%)
+           - Third value (25%): Lightness (0-100%)
+           - Set to 'transparent' to remove background color
+           ============================================ */
+        .gradient-hero {
+            background: transparent;  
+        }
+        
+
+        /* ============================================
+           CARD SHADOW EFFECT
+           Used for feature cards and event cards
+           CUSTOMIZATION:
+           - Change opacity value (0.1) to make shadow darker/lighter
+           - 0 4px 20px -2px = shadow blur and spread
+           ============================================ */
+        .shadow-card {
+            box-shadow: 0 4px 20px -2px hsl(95 45% 25% / 0.1);
+        }
+
+        /* ============================================
+           ANIMATION: FADE IN
+           Elements slide up and fade in
+           Used for section entries
+           ============================================ */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           ANIMATION: SCALE IN
+           Elements scale up from 95% to 100%
+           Used for cards and interactive elements
+           ============================================ */
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* ============================================
+           UTILITY CLASS: FADE IN ANIMATION
+           Apply to any element with class="animate-fade-in"
+           Duration: 0.6s
+           CUSTOMIZATION: Change 0.6s to speed up/slow down
+           ============================================ */
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        /* ============================================
+           UTILITY CLASS: SCALE IN ANIMATION
+           Apply to any element with class="animate-scale-in"
+           Duration: 0.6s
+           ============================================ */
+        .animate-scale-in {
+            animation: scaleIn 0.6s ease-out forwards;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .welcome-popup {
+            position: fixed;
+            top: 20px; right: 20px;
+            background: #4CAF50; color: white;
+            padding: 15px 25px; border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 9999; animation: fadeIn 0.5s;
+            font-weight: bold; max-width: 300px;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        .close-popup { cursor: pointer; float: right; font-size: 18px; }
+
+        /* Dropdown Styles */
+        #userDropdown {
+            top: 100%; /* Position below button */
+        }
+        #userDropdown.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Mobile Menu Styles */
+        #mobileMenu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out;
+        }
+        #mobileMenu.active {
+            opacity: 1;
+            visibility: visible;
+            max-height: 600px; /* Adjust for menu height */
+        }
+
+        /* Smooth modal open */
+        #videoModal {
+            transition: opacity 0.3s ease;
+        }
+
+        /* Optional: Pulse animation on play icon when hovering button */
+        .group:hover svg {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        /* Underline effect only on hover for the title */
+        .underline-hover {
+            position: relative;
+        }
+        .underline-hover::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -4px;
+            left: 50%;
+            background-color: hsl(110 55% 45%); /* accent color */
+            transition: width 0.4s ease, left 0.4s ease;
+        }
+        .group:hover .underline-hover::after {
+            width: 100%;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-300">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1 class="text-xl sm:text-2xl font-bold text-primary font-poppins">
+                        Livestock Analytics Platform
+                    </h1>
+                </div>
+    
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-foreground hover:text-primary transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-foreground hover:text-primary transition-colors">How It Works</a>
+                    <a href="#contact" class="text-foreground hover:text-primary transition-colors">Contact</a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-4">
+                    {% if not current_user.is_authenticated %}
+                        <!-- Guest Buttons -->
+                        <a href="{{ url_for('login_page') }}" class="px-4 py-2 hover:bg-gray-100 rounded-md transition-colors text-foreground text-decoration-none">Sign In</a>
+                        <a href="{{ url_for('register_page') }}" class="px-4 py-2 bg-accent hover:bg-accent/90 text-white rounded-md transition-colors text-decoration-none">Get Started</a>
+                    {% else %}
+                        <!-- Logged-In: User Dropdown (from previous guide) -->
+                        <div class="relative">
+                            <!-- Replace your entire logged-in dropdown button with this -->
+                            <button id="userDropdownBtn" class="flex items-center px-4 py-2 hover:bg-gray-100 rounded-md transition-colors text-foreground cursor-pointer">
+                                <img src="data:image/png;base64,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" class="w-8 h-8 rounded-full mr-2" alt="User Avatar">
+                                <!-- Arrow only (no text) -->
+                                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="userDropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible transition-all duration-200 z-50">
+                                <a href="{{ url_for('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
+                                <a href="{{ url_for('settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</a>
+                                <hr class="my-1">
+                                <a href="{{ url_for('logout_page') }}" class="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">Sign Out</a>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Hamburger Button (Mobile Only) -->
+                <button class="md:hidden" onclick="toggleMobileMenu()">
+                    <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- ============ CHANGE THIS BLOCK ONLY ============ -->
+            <!-- Mobile Menu -->
+            <div id="mobileMenu" class="md:hidden bg-white border-t border-gray-200">
+                <ul class="py-2">
+                    <li><a href="#features" class="block px-4 py-2 text-foreground hover:bg-gray-100">Features</a></li>
+                    <li><a href="#how-it-works" class="block px-4 py-2 text-foreground hover:bg-gray-100">How It Works</a></li>
+                    <li><a href="#contact" class="block px-4 py-2 text-foreground hover:bg-gray-100">Contact</a></li>
+        
+                    {% if not current_user.is_authenticated %}
+                        <li><a href="{{ url_for('login_page') }}" class="block px-4 py-2 text-foreground hover:bg-gray-100">Sign In</a></li>
+                        <li><a href="{{ url_for('register_page') }}" class="block px-4 py-2 bg-accent text-white text-center">Sign Up</a></li>
+                    {% else %}
+                        <!-- Logged-in mobile view -->
+                        <li class="px-4 py-2 flex items-center border-b">
+                            <img src="data:image/png;base64,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" class="w-10 h-10 rounded-full mr-3" alt="Avatar">
+                            <div>
+                                <div class="font-medium">{{ current_user.username }}</div>
+                                <div class="text-sm text-gray-500">{{ current_user.role }}</div>
+                            </div>
+                        </li>
+                        <li><a href="{{ url_for('profile') }}" class="block px-4 py-2 text-foreground hover:bg-gray-100">Profile</a></li>
+                        <li><a href="{{ url_for('settings') }}" class="block px-4 py-2 text-foreground hover:bg-gray-100">Settings</a></li>
+                        <li><a href="{{ url_for('logout_page') }}" class="block px-4 py-2 text-red-600 hover:bg-gray-100">Sign Out</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-16">
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1500595046743-cd271d694d30?w=1920&h=1080&fit=crop" alt="Livestock farm" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-r from-primary/90 to-primary/70"></div>
+        </div>
+        
+        <div class="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="max-w-4xl mx-auto animate-fade-in">
+                <h1 class="text-4xl sm:text-5xl lg:text-7xl font-bold text-white mb-6 font-poppins">
+                    Smart Livestock Management Made Simple
+                </h1>
+                <p class="text-xl sm:text-2xl text-white/90 mb-8 max-w-3xl mx-auto">
+                    Track health, manage feeds, monitor growth, and optimize your livestock operations with advanced analytics and real-time insights.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
+                    <a href="{{ url_for('new_vet_appointment') }}" 
+                        class="px-8 py-4 bg-accent hover:bg-accent/90 text-white text-lg rounded-md font-semibold transition-all hover:scale-105">
+                            Start Free Trial
+                        
+                    </a>  
+                    
+                    <!-- ============ REPLACE "Watch Demo" BUTTON WITH THIS (WITH PLAY ICON) ============ -->
+                    <button onclick="openVideoModal()" 
+                            class="group inline-flex items-center gap-3 px-3 py-2 bg-white/15 hover:bg-white/25 backdrop-blur-sm text-white border-2 border-white/50 text-lg rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:border-white shadow-lg">
+    
+                        <!-- ============ REPLACE THE OLD <span> WITH THIS (RED ON HOVER) ============ -->
+                        <span class="flex items-center justify-center w-10 h-10 bg-white/20 rounded-full group-hover:bg-red-600 transition-colors duration-300">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </span>
+    
+                        <span>Watch Demo</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
+                    <div class="text-white">
+                        <div class="text-4xl font-bold font-poppins mb-2">5,000+</div>
+                        <div class="text-white/80">Active Farms</div>
+                    </div>
+                    <div class="text-white">
+                        <div class="text-4xl font-bold font-poppins mb-2">2M+</div>
+                        <div class="text-white/80">Animals Tracked</div>
+                    </div>
+                    <div class="text-white">
+                        <div class="text-4xl font-bold font-poppins mb-2">98%</div>
+                        <div class="text-white/80">Satisfaction</div>
+                    </div>
+                    <div class="text-white">
+                        <div class="text-4xl font-bold font-poppins mb-2">24/7</div>
+                        <div class="text-white/80">Support</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-20 bg-background">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 font-poppins">
+                    Comprehensive Livestock Management Features
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-3xl mx-auto">
+                    Everything you need to manage your livestock efficiently in one powerful platform
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature cards will be dynamically inserted here -->
+                <div id="features-container"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="py-20 bg-white">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 animate-fade-in">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-foreground mb-4 font-poppins">
+                    How It Works
+                </h2>
+                <p class="text-xl text-muted-foreground max-w-2xl mx-auto">
+                    Get started with Livestock Analytics Platform in four simple steps
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8" id="steps-container"></div>
+        </div>
+    </section>
+
+    <!-- ============================================
+         EVENTS SECTION - HTML STRUCTURE
+         This section displays rotating event cards
+         ============================================ -->
+    <section class="bg-gradient-to-b from-blue-50 to-blue-100 py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- EVENT HEADER BANNER 
+                 - Background gradient defined by .gradient-hero class (line 59-61)
+                 - Change py-16 to adjust header height
+                 - Background image can be changed in the style attribute below -->
+            <div class="relative gradient-hero py-16 rounded-t-2xl overflow-hidden">
+                <!-- BACKGROUND IMAGE OVERLAY 
+                     - Change opacity-30 to adjust image visibility (0-100)
+                     - Replace URL to change background image -->
+                <div class="absolute inset-0 opacity-30" style="background-image: url('https://images.unsplash.com/photo-1500595046743-cd271d694d30'); background-size: cover; background-position: center;"></div>
+                
+                <!-- HEADER TEXT 
+                     - Edit text size with text-3xl, text-4xl, etc.
+                     - Change text content below -->
+                <div class="relative text-center px-4">
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-white font-poppins">
+                        Journey Throughout the Life<br>of Your Livestock.
+                    </h2>
+                </div>
+            </div>
+
+            <!-- EVENT CARDS CONTAINER 
+                 - bg-white sets background color
+                 - pb-12 sets bottom padding (change to pb-6 for less, pb-16 for more)
+                 - rounded-b-2xl creates rounded bottom corners
+                 - px-4 sm:px-6 lg:px-8 controls horizontal padding -->
+            <div class="bg-white pb-12 rounded-b-2xl px-4 sm:px-6 lg:px-8">
+                <!-- ========================================
+                     DYNAMIC EVENT CARD - SIZE CONTROLS
+                     ========================================
+                     TO REDUCE CARD SIZE, CHANGE THESE:
+                     
+                     1. MAX WIDTH (Most Important):
+                        Current: max-w-6xl (72rem / 1152px)
+                        Options to make SMALLER:
+                        - max-w-5xl (64rem / 1024px) - Slightly smaller
+                        - max-w-4xl (56rem / 896px)  - Medium size
+                        - max-w-3xl (48rem / 768px)  - Small
+                        - max-w-2xl (42rem / 672px)  - Very small
+                     
+                     2. VERTICAL SPACING:
+                        - mt-8 controls top margin (change to mt-4, mt-6, mt-10, etc.)
+                     
+                     3. SHADOW:
+                        - shadow-2xl = large shadow
+                        - shadow-xl = medium shadow
+                        - shadow-lg = small shadow
+                     
+                     4. CORNER RADIUS:
+                        - rounded-lg = medium corners
+                        - rounded-xl = larger corners
+                        - rounded-md = smaller corners
+                     
+                     EXAMPLE TO MAKE SMALLER:
+                     Change max-w-6xl to max-w-4xl below
+                     ======================================== -->
+                <div class="overflow-hidden shadow-2xl border-none max-w-4xl mx-auto mt-8 rounded-lg bg-white" id="event-card"></div>
+                
+                <!-- CAROUSEL NAVIGATION DOTS 
+                     - Dots are generated by renderCarouselDots() function (line 514-524)
+                     - gap-2 controls spacing between dots
+                     - mt-6 controls distance from card above -->
+                <div class="flex justify-center gap-2 mt-6" id="carousel-dots"></div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- CTA Section -->
+    <section class="py-20 gradient-hero bg-primary">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto text-center animate-fade-in">
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-6 font-poppins">
+                    Ready to Transform Your Livestock Management?
+                </h2>
+                
+                <p class="text-xl text-white/90 mb-8">
+                    Join thousands of farmers who trust LivestockPro for smarter, data-driven livestock management.
+                </p>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <a href="{{ url_for('register_page') }}" 
+                        class="inline-flex items-center px-8 py-3 bg-accent hover:bg-accent/90 text-white text-xl font-bold rounded-xl shadow-2xl transform hover:scale-105 transition-all duration-300">
+                        Start Your Free Trial →
+                    </a>
+
+                    <a href="{{ url_for('new_vet_appointment') }}" 
+                        class="px-6 py-2 bg-transparent border-2 border-white text-white hover:bg-white hover:text-primary text-lg rounded-xl font-semibold transition-all">
+                            Schedule a Demo
+                    </a>
+                </div>
+
+                <p class="mt-6 text-sm text-white/70">
+                    No credit card required • 14-day free trial • Cancel anytime
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <hr></hr>
+
+    <!-- Footer -->
+    <footer class="bg-primary text-primary-foreground py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4 font-poppins">LivestockPro</h3>
+                    <!-- YOUR WHITE LOGO – RESPONSIVE & CENTERED ON MOBILE -->
+                    <div class="flex justify-center md:justify-start mb-6">
+                        <img src="https://livestockanalytics.com/hs-fs/hubfs/Logos%20e%20%C3%ADconos/livestockW.png?width=271&height=50&name=livestockW.png"
+                                alt="LivestockPro Logo"
+                                class="w-48 sm:w-56 md:w-64 h-auto object-contain transition-all duration-300">
+                    </div>
+                    <p class="text-primary-foreground/80">Smart livestock management for modern farms.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-primary-foreground/80">
+                        <li><a href="#" class="hover:text-accent transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Updates</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-primary-foreground/80">
+                        <li><a href="#" class="hover:text-accent transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Blog</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Careers</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold mb-4">Legal</h4>
+                    <ul class="space-y-2 text-primary-foreground/80">
+                        <li><a href="#" class="hover:text-accent transition-colors">Privacy</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Terms</a></li>
+                        <li><a href="#" class="hover:text-accent transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-primary-foreground/20 mt-8 pt-8 text-center text-primary-foreground/70">
+                <p>&copy; 2024 LivestockPro. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Features Data
+        const features = [
+            {
+                title: "Vaccination Schedule",
+                description: "Never miss a vaccination date. Set up automated reminders and track vaccination history for each animal in your herd.",
+                image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=800&h=600&fit=crop",
+                icon: "💉",
+                link: "NewVaccinationSchedule.html"
+            },
+            {
+                title: "Health Matters",
+                description: "Monitor vital signs, track symptoms, and maintain comprehensive health records for proactive livestock care.",
+                image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8?w=800&h=600&fit=crop",
+                icon: "❤️",
+                link: "NewHealthMatters.html"
+            },
+            {
+                title: "Feeds & Additives",
+                description: "Optimize nutrition plans, track feed consumption, and manage supplement schedules for peak performance.",
+                image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=800&h=600&fit=crop",
+                icon: "🌾",
+                link: "NewFeedsAdditives.html"
+            },
+            {
+                title: "Growth Monitor",
+                description: "Track weight gain, analyze growth patterns, and make data-driven decisions to maximize productivity.",
+                image: "https://images.unsplash.com/photo-1560493676-04071c5f467b?w=800&h=600&fit=crop",
+                icon: "📈",
+                link: "NewGrowthMonitor.html"
+            },
+            {
+                title: "Habitat Management",
+                description: "Monitor environmental conditions, ensure optimal living spaces, and maintain ideal conditions for your livestock.",
+                image: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=800&h=600&fit=crop",
+                icon: "🏠",
+                link: "NewHabitatManagement.html"
+            },
+            {
+                title: "Species & Variety",
+                description: "Track different species and varieties, manage breeding programs, and maintain genetic diversity in your livestock.",
+                image: "https://images.unsplash.com/photo-1516467508483-a7212febe31a?w=800&h=600&fit=crop",
+                icon: "🐄",
+                link: "NewSpeciesVariety.html"
+            },
+            {
+                title: "Vet Appointment",
+                description: "Connect with veterinary professionals, schedule appointments, and discover nearby veterinary clinics for expert livestock care.",
+                image: "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=800&h=600&fit=crop",
+                icon: "🩺",
+                link: "NewVetAppointment.html"
+            },
+            {
+                title: "Farmers Community Connect",
+                description: "Join a thriving community of livestock farmers. Share experiences, exchange best practices, and learn from fellow farmers.",
+                image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=800&h=600&fit=crop",
+                icon: "🤝",
+                link: "NewFarmersCommunity.html"
+            },
+            {
+                title: "Symptom-to-Disease Checker",
+                description: "Input your animal's symptoms and get instant diagnostic insights. Receive actionable recommendations for treatment and care.",
+                image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop",
+                icon: "🔍",
+                link: "NewSymptomChecker.html"
+            }
+        ];
+
+        // Steps Data
+        const steps = [
+            { number: "01", title: "Sign Up & Setup", description: "Create your account and input your farm details in minutes. Our intuitive onboarding gets you started quickly.", icon: "👤" },
+            { number: "02", title: "Add Your Livestock", description: "Register your animals with individual profiles. Track breeds, ages, and specific health information.", icon: "💾" },
+            { number: "03", title: "Monitor & Analyze", description: "Get real-time insights and analytics. Our platform processes data to provide actionable recommendations.", icon: "📊" },
+            { number: "04", title: "Access Anywhere", description: "Manage your farm from desktop or mobile. Sync across all devices for seamless operation.", icon: "📱" }
+        ];
+
+        // ============================================
+        // EVENTS DATA ARRAY
+        // Add, remove, or modify events here
+        // Each event object contains all event information
+        // ============================================
+        const events = [
+            {
+                id: 1,  // Unique identifier for each event
+                title: "Explore the Annual Global Livestock Health Expo 2029",  // Main event title
+                subtitle: "Discover New Ways to Improve Animal Health and Wellbeing",  // Secondary description
+                date: "Saturday, 20 Apr 2029",  // Event date - displayed prominently
+                time: "10:00 AM to 06:00 PM",  // Event time range
+                image: "https://images.unsplash.com/photo-1500595046743-cd271d694d30",  // Event thumbnail image URL
+                bgColor: "from-yellow-100 to-yellow-200",  // Tailwind gradient colors for left panel background
+                features: ["Expert-Led Health Talks", "Free Health Screenings", "Fitness and Nutrition Workshops", "Animal Health Awareness"],  // List of event features with checkmarks
+                bullets: ["Learn about advancements in Animal healthcare", "Attend wellness workshops and seminars"],  // Main bullet points
+                registrationText: "Register for the upcoming Global expo now"  // Call-to-action text above date
+            },
+            {
+                id: 2,
+                title: "Celebrate the Eco-Friendly on Animal Sustainability Festival 2030",
+                subtitle: "Be Part of a Greener Future with Hands-On Activities",
+                date: "Sunday, 10 Aug 2030",
+                time: "11:00 AM to 07:00 PM",
+                image: "https://images.unsplash.com/photo-1530836369250-ef72a3f5cda8",
+                bgColor: "from-teal-100 to-orange-100",
+                features: ["Eco-Friendly Product Demos", "Sustainable Animal Tips", "Zero-Waste Lifestyle Workshops", "Renewable Energy Talks"],
+                bullets: ["Discover sustainable living practices", "Join eco-friendly workshops and talks"],
+                registrationText: "Register for the upcoming eco festival now"
+            },
+            {
+                id: 3,
+                title: "Join the Global Agriculture Innovation Summit 2028",
+                subtitle: "Unlock Opportunities to Collaborate and Innovate",
+                date: "Friday, 15 Jun 2028",
+                time: "09:00 AM to 05:00 PM",
+                image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449",
+                bgColor: "from-yellow-50 to-lime-100",
+                features: ["Keynote Speeches by Agric. Pioneers", "Livestock/Agriculture Workshops", "Explore Livestock and Farming Innovations", "Startup Pitch Sessions"],
+                bullets: ["Discover the latest in advancements in agriculture", "Network with industry farmers and Innovators"],
+                registrationText: "Register for the Global summit now!"
+            },
+            {
+                id: 4,
+                title: "Attend a Free Livestock and Farmer Summit Annual Event",
+                subtitle: "Earn Perks and Benefits from this Event to a farmer and their Livestock",
+                date: "Wednesday, 23 Aug 2027",
+                time: "03:30 PM to 04:30 PM",
+                image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158",
+                bgColor: "from-blue-50 to-blue-100",
+                features: ["Live Farmer-Led Session", "Know More about Livestock in Depth", "Details on Best Animal Practices & Technologies", "Learn about Domestic, Wild, Aquatic Animals etc"],
+                bullets: ["Learn about Best Livestock Farming practices", "Attend & Gain vast Knowledge in Livestock Farming."],
+                registrationText: "Register for the upcoming annual event now"
+            }
+        ];
+
+        // State
+        let currentSlide = 0;
+        let timeLeft = { days: 1292, hours: 4, minutes: 51, seconds: 42 };
+
+        // Render Features
+        function renderFeatures() {
+            const container = document.getElementById('features-container');
+            container.className = 'col-span-1 md:col-span-2 lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8';
+            container.innerHTML = features.map((feature, index) => `
+                <!-- ============ EACH FEATURE CARD – HOVER LIFT + CLICKABLE TITLE ============ -->
+                <div class="group block rounded-xl bg-white shadow-lg hover:shadow-2xl transform hover:-translate-y-6 transition-all duration-500 ease-out animate-scale-in cursor-pointer"
+                        style="animation-delay: ${index * 100}ms">
+         
+                    <!-- Full card is clickable (goes to the feature page) -->
+                    <a href="${feature.link}" class="block h-full">
+                        <div class="relative h-48 overflow-hidden rounded-t-xl">
+                            <img src="${feature.image}" alt="${feature.title}" 
+                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                            <div class="absolute inset-0 bg-gradient-to-t from-primary/90 to-transparent"></div>
+                
+                            <!-- Icon (bigger + bounce on hover) -->
+                            <div class="absolute bottom-4 left-4">
+                                <!-- ============ ICON: NO MOVEMENT, NO ROTATION, NO BOUNCE ============ -->
+                                    <div class="bg-accent text-white p-4 rounded-xl text-4xl">
+                                        ${feature.icon}
+                                    </div>
+                            </div>
+                        </div>
+            
+                        <div class="p-7 text-center">
+                            <!-- TITLE IS NOW THE CLICKABLE LINK (underlined on hover) -->
+                            <!-- ============ TITLE WITH SUBTLE UNDERLINE ON HOVER (REVERTED STYLE) ============ -->
+                            <h3 class="relative text-2xl font-bold text-foreground mb-4 font-poppins inline-block
+                                    after:content-[''] after:absolute after:w-0 after:h-0.5 after:bottom-0 after:left-0 
+                                    after:bg-accent after:transition-all after:duration-300 
+                                    hover:after:w-full">
+                                ${feature.title}
+                            </h3>
+                            <!-- ============ END ============ -->
+                            <p class="text-muted-foreground leading-relaxed">
+                                ${feature.description}
+                            </p>
+                        </div>
+                    </a>
+                </div>
+                <!-- ============ END OF CARD ============ -->
+            `).join('');
+        }
+
+        // Render Steps
+        function renderSteps() {
+            const container = document.getElementById('steps-container');
+            container.innerHTML = steps.map((step, index) => `
+                <div class="p-6 text-center bg-white rounded-lg hover:shadow-card transition-all duration-300 animate-scale-in" style="animation-delay: ${index * 100}ms">
+                    <div class="bg-accent text-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                        ${step.icon}
+                    </div>
+                    <div class="text-4xl font-bold text-primary mb-2 font-poppins">${step.number}</div>
+                    <h3 class="text-xl font-semibold text-foreground mb-3">${step.title}</h3>
+                    <p class="text-muted-foreground">${step.description}</p>
+                </div>
+            `).join('');
+        }
+
+        // ============================================
+        // RENDER EVENT CARD FUNCTION
+        // This function creates the HTML for each event card
+        // Called when page loads and when carousel slides change
+        // ============================================
+        function renderEventCard() {
+            const event = events[currentSlide];  // Get current event data
+            const card = document.getElementById('event-card');  // Get card container
+            
+            // Build the card HTML structure
+            card.innerHTML = `
+                <div class="grid md:grid-cols-2">
+                    
+                    <!-- LEFT PANEL - Event Details
+                         CUSTOMIZATION TIPS TO REDUCE SIZE:
+                         - Change ${event.bgColor} gradient colors in events array (line 384)
+                         - PADDING: Adjust p-8 lg:p-12 to reduce internal spacing
+                           Current: p-8 (2rem) on mobile, lg:p-12 (3rem) on large screens
+                           Make SMALLER: p-4 lg:p-6 or p-6 lg:p-8
+                         - Modify text colors (text-gray-900, text-gray-800) -->
+                    <div class="bg-gradient-to-br ${event.bgColor} p-6 lg:p-8">
+                        
+                        <!-- EVENT IMAGE THUMBNAIL
+                             TO REDUCE SIZE:
+                             - Current: w-32 h-32 (8rem / 128px)
+                             - SMALLER options: w-24 h-24 (96px), w-20 h-20 (80px), w-16 h-16 (64px)
+                             - border-4 controls border thickness (change to border-2 for thinner)
+                             - mb-8 and mb-6 control spacing (reduce to mb-4, mb-3, etc.)
+                             - border-white changes border color -->
+                        <div class="mb-8">
+                            <div class="w-24 h-24 rounded-full overflow-hidden mb-6 border-4 border-white shadow-lg">
+                                <img src="${event.image}" alt="${event.title}" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                        
+                        <!-- EVENT TITLE
+                             TO REDUCE SIZE:
+                             - Current: text-2xl (1.5rem) mobile, lg:text-3xl (1.875rem) large screens
+                             - SMALLER options: text-xl lg:text-2xl or text-lg lg:text-xl
+                             - font-bold controls weight (change to font-semibold for lighter)
+                             - mb-4 controls spacing below (reduce to mb-2 or mb-3)
+                             - text-gray-900 controls color -->
+                        <h2 class="text-xl lg:text-2xl font-bold text-gray-900 mb-4">${event.title}</h2>
+                        
+                        <!-- BULLET POINTS LIST
+                             - space-y-2 controls spacing between items
+                             - Change • symbol to any character you want -->
+                        <ul class="space-y-2 mb-6">
+                            ${event.bullets.map(bullet => `<li class="text-gray-800 font-medium">• ${bullet}</li>`).join('')}
+                        </ul>
+                        
+                        <!-- EVENT SUBTITLE -->
+                        <p class="text-lg font-semibold text-gray-900 mb-6">${event.subtitle}</p>
+                        
+                        <!-- FEATURES GRID WITH CHECKMARKS
+                             - grid-cols-2 creates 2 columns
+                             - Change to grid-cols-1 for single column
+                             - gap-3 controls spacing between items
+                             - ✓ symbol can be changed to any icon -->
+                        <div class="grid grid-cols-2 gap-3">
+                            ${event.features.map(feature => `
+                                <div class="flex items-start gap-2">
+                                    <span class="text-blue-600 mt-1">✓</span>
+                                    <span class="text-sm text-gray-800 font-medium">${feature}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    
+                    <!-- RIGHT PANEL - Registration & Countdown
+                         CUSTOMIZATION TIPS TO REDUCE SIZE:
+                         - Change from-stone-200 to-stone-300 for different background gradient
+                         - PADDING: Adjust p-8 lg:p-12 to reduce internal spacing
+                           Current: p-8 (2rem) on mobile, lg:p-12 (3rem) on large screens
+                           Make SMALLER: p-4 lg:p-6 or p-6 lg:p-8 -->
+                    <div class="bg-gradient-to-br from-stone-200 to-stone-300 p-6 lg:p-8 flex flex-col justify-center items-center text-center">
+                        
+                        <!-- REGISTRATION CALL TO ACTION -->
+                        <h3 class="text-base font-semibold text-gray-900 mb-1">${event.registrationText}</h3>
+                        
+                        <!-- DATE AND TIME DISPLAY
+                             - text-2xl controls date size
+                             - Change font-bold to font-normal for lighter weight -->
+                        <div class="mb-6 mt-4">
+                            <p class="text-2xl font-bold text-gray-900 mb-2">${event.date}</p>
+                            <p class="text-gray-700">${event.time}</p>
+                        </div>
+                        
+                        <!-- COUNTDOWN TIMER
+                             - text-2xl sm:text-3xl controls size
+                             - text-red-500 controls color
+                             - 🕐 emoji can be changed to any icon
+                             - Timer updates every second (see line 541-561) -->
+                        <div class="flex items-center gap-3 mb-8 text-2xl sm:text-3xl font-bold text-red-500">
+                            <span>🕐</span>
+                            <span id="countdown">
+                                ${timeLeft.days} : ${String(timeLeft.hours).padStart(2, '0')} : ${String(timeLeft.minutes).padStart(2, '0')} : ${String(timeLeft.seconds).padStart(2, '0')}
+                            </span>
+                        </div>
+                        
+                        <!-- REGISTRATION BUTTON
+                             - bg-teal-500 controls button color
+                             - hover:bg-teal-600 controls hover color
+                             - px-8 py-6 controls button padding/size
+                             - Change text or add onclick event -->
+                        <button class="bg-teal-500 hover:bg-teal-600 text-white font-bold px-8 py-6 text-base sm:text-lg rounded-md transition-all">
+                            LEARN MORE<br>ABOUT THIS<br>EVENT
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Carousel Dots
+        function renderCarouselDots() {
+            const container = document.getElementById('carousel-dots');
+            container.innerHTML = events.map((_, index) => `
+                <button 
+                    onclick="setSlide(${index})"
+                    class="w-3 h-3 rounded-full transition-colors duration-300 ${index === currentSlide ? 'bg-gray-900' : 'bg-gray-400 hover:bg-gray-600'}"
+                    aria-label="Go to slide ${index + 1}"
+                ></button>
+            `).join('');
+        }
+
+        // Set Slide
+        function setSlide(index) {
+            currentSlide = index;
+            renderEventCard();
+            renderCarouselDots();
+        }
+
+        // ============================================
+        // AUTO-ROTATE CAROUSEL
+        // Changes event card automatically every 2 minutes
+        // CUSTOMIZATION: Change 120000 to adjust timing
+        // - 60000 = 1 minute
+        // - 180000 = 3 minutes
+        // - 300000 = 5 minutes
+        // ============================================
+        setInterval(() => {
+            currentSlide = (currentSlide + 1) % events.length;
+            renderEventCard();
+            renderCarouselDots();
+        }, 120000); // 2 minutes (120000 milliseconds)
+
+        // ============================================
+        // COUNTDOWN TIMER
+        // Updates the countdown clock every second
+        // Decrements: seconds → minutes → hours → days
+        // ============================================
+        setInterval(() => {
+            if (timeLeft.seconds > 0) {
+                timeLeft.seconds--;
+            } else if (timeLeft.minutes > 0) {
+                timeLeft.minutes--;
+                timeLeft.seconds = 59;
+            } else if (timeLeft.hours > 0) {
+                timeLeft.hours--;
+                timeLeft.minutes = 59;
+                timeLeft.seconds = 59;
+            } else if (timeLeft.days > 0) {
+                timeLeft.days--;
+                timeLeft.hours = 23;
+                timeLeft.minutes = 59;
+                timeLeft.seconds = 59;
+            }
+            const countdownEl = document.getElementById('countdown');
+            if (countdownEl) {
+                countdownEl.textContent = `${timeLeft.days} : ${String(timeLeft.hours).padStart(2, '0')} : ${String(timeLeft.minutes).padStart(2, '0')} : ${String(timeLeft.seconds).padStart(2, '0')}`;
+            }
+        }, 1000);
+
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            if (menu) {
+                menu.classList.toggle('active');
+            }
+        }
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderFeatures();
+            renderSteps();
+            renderEventCard();
+            renderCarouselDots();
+        });
+    </script>
+
+    {% if session.show_welcome %}
+    <div class="welcome-popup" id="welcomePopup">
+        Welcome, {{ session.welcome_name }}!
+        <span class="close-popup" onclick="this.parentElement.remove(); sessionStorage.setItem('welcome_shown', 'true');">×</span>
+    </div>
+
+    <script>
+        // Prevent re-show in same session
+        if (sessionStorage.getItem('welcome_shown')) {
+            document.getElementById('welcomePopup')?.remove();
+        }
+
+        
+
+        // User Dropdown Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('userDropdownBtn');
+            const dropdown = document.getElementById('userDropdown');
+    
+            if (btn && dropdown) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    dropdown.classList.toggle('show');
+                });
+                
+                // Close on outside click
+                document.addEventListener('click', function() {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+    </script>
+
+    {% endif %}
+
+    <!-- ============ ADD THIS JS BEFORE </body> ============ -->
+    <script>
+        function openVideoModal() {
+            document.getElementById('videoModal').classList.remove('hidden');
+            document.getElementById('videoModal').classList.add('flex');
+        }
+
+        function closeVideoModal() {
+            document.getElementById('videoModal').classList.add('hidden');
+            document.getElementById('videoModal').classList.remove('flex');
+            // Reset video to stop playback
+            const iframe = document.querySelector('#videoModal iframe');
+            iframe.src = iframe.src;
+        }
+
+        // Optional: Close modal when clicking outside video
+        document.getElementById('videoModal').addEventListener('click', function(e) {
+            if (e.target === this) closeVideoModal();
+        });
+    </script>
+    <!-- ============ END JS ============ -->
+
+
+    <!-- ============ ADD THIS VIDEO MODAL (place anywhere in <body>) ============ -->
+    <div id="videoModal" class="fixed inset-0 bg-black/90 z-50 hidden flex items-center justify-center">
+        <div class="relative w-full max-w-4xl mx-4">
+            <button onclick="closeVideoModal()" class="absolute -top-12 right-0 text-white text-5xl hover:text-gray-300">&times;</button>
+            <div class="relative pt-[56.25%]"> <!-- 16:9 Aspect Ratio -->
+                <iframe class="absolute inset-0 w-full h-full rounded-lg shadow-2xl" 
+                        src="https://www.youtube.com/embed/B8xUic0hU94?start=7" 
+                        title="LivestockPro Demo Video" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </div>
+    <!-- ============ END VIDEO MODAL ============ -->
+
+    
+</body>
+</html>
+
+
+

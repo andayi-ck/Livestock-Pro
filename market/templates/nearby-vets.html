@@ -1,0 +1,1401 @@
+
+
+
+
+
+
+{% extends 'base.html' %}
+{% block title %}
+    LIVESTOCK MANAGEMENT SYSTEM
+{% endblock %}
+{% block content %}
+
+
+
+
+<style>
+    .small-box {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid #fff;  /* Border color */
+        border-radius: 20px;  /* Rounded corners */
+        background-color: transparent;
+        color: black;  /* Text color */
+        font-size: 14px;
+        font-weight: 600;  /* Slightly bold */
+        text-align: center;
+        text-transform: uppercase; /* Makes text all caps */
+        letter-spacing: 1px;  /* Spaced-out text */
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .small-box:hover {
+        background-color: rgba(17, 163, 163, 0.2);  /* Light hover effect */
+        cursor: pointer;
+    }
+    
+    .container2 {
+        display: flex;
+        gap: 10px; /* Space between buttons */
+        justify-content: center; /* Center align */
+        align-items: center;
+        margin-top: 20px;
+        position: absolute;
+        top: 40px;
+        left: -50px
+        height: 100px;
+    }
+
+    .container {
+        width: 100%;
+        margin: 0 auto;
+        position: absolute;
+        top: 280px;
+        left: 100px;
+        height: 100px;
+
+    }
+
+    .custom-hr {
+        position: absolute; /* Adjust position if needed */
+        top: -150px;         /* Distance from the top */
+        left: 240px;         /* Distance from the left */
+        width: 60%;         /* Length of the line */
+        height: 3px;        /* Thickness */
+        background-color:rgb(182, 138, 18); /* Change to any color */
+        border-radius: 10px; /* Makes the edges round */
+        border: none; /* Remove default border */
+    }
+
+    .cards-wrapper {
+        position: absolute;
+        top: -40px;
+        left: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+
+    .doctor-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+
+    .doctor-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .doctor-image {
+        width: 100%;
+        height: 150px;
+        position: relative;
+    }
+
+    .doctor-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+
+    .price-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .price-tag::before {
+        margin-right: 2px;
+    }
+
+    .video-icon {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #fff;
+        padding: 5px;
+        border-radius: 50%;
+        font-size: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .doctor-info {
+        padding: 15px;
+    }
+
+    .doctor-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+
+    .specialty {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .rating {
+        color: #f39c12;
+        margin-left: 5px;
+    }
+
+    .rating::before {
+        content: '★';
+        margin-right: 3px;
+    }
+
+    .details {
+        font-size: 14px;
+        color: #666;
+        margin: 10px 0;
+    }
+
+    .details li {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .details li::before {
+        content: '○';
+        margin-right: 8px;
+        color: #3498db;
+        font-size: 10px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .schedule-btn, .profile-btn {
+        flex: 1;
+        padding: 8px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .schedule-btn {
+        background: #fff;
+        border: 1px solid #3498db;
+        color: #3498db;
+    }
+
+    .schedule-btn:hover {
+        background: #3498db;
+        color: #fff;
+    }
+
+    .profile-btn {
+        background: #3498db;
+        border: none;
+        color: #fff;
+    }
+
+    .profile-btn:hover {
+        background: #2980b9;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        max-width: 90%;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        font-family: 'Nunito', sans-serif;
+        color: chocolate;
+    }
+
+    .modal-content form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-content label {
+        font-size: 14px;
+        color: #333;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .modal-content input,
+    .modal-content select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .modal-content button {
+        padding: 10px;
+        background: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .modal-content button:hover {
+        background: #2980b9;
+    }
+
+    /* Floating Age Calculator Styles */
+    .floating-container {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        z-index: 1000;
+        width: 300px;
+        height: auto;
+    }
+
+    .floating-container form {
+        position: relative;
+        height: 200px;
+    }
+
+    .floating-container label {
+        font-family: Georgia, serif;
+        color: #333;
+    }
+
+    .floating-container input[type="date"] {
+        font-family: Pacifico, cursive;
+        border: none;
+        background: transparent;
+        outline: none;
+        color: transparent;
+    }
+
+    .floating-container input[type="date"]:focus {
+        color: black;
+    }
+
+    .floating-container input[type="date"]:not(:focus):not(:valid) {
+        color: transparent;
+    }
+
+    .floating-container select {
+        font-family: Georgia, serif;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .floating-container button {
+        font-family: Georgia, serif;
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .floating-container button:hover {
+        background-color: #2980b9;
+    }
+
+    #resultBox {
+        font-family: Georgia, serif;
+        background: rgba(13, 170, 209, 0.7);
+        color: black;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    /* Initial hidden state for animation */
+    .doctor-card {
+        opacity: 0;
+        transform: translateY(20px); /* Move down slightly */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+    
+    /* Apply visible state when animation starts */
+    .doctor-card.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+
+    .close-btn {
+        background: white;
+        color: black;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        float: right;
+    }
+
+    input[type="text"], select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .search-results {
+        margin-top: 15px;
+        text-align: left;
+    }
+
+
+
+    .pagination {
+        position: absolute;
+        bottom: -130px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+    }
+    
+    .pagination a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 50%; /* Makes it a circle */
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        position: relative; /* For tooltip positioning */
+    }
+    
+    .pagination a:hover {
+        background-color: #2980b9;
+        transform: scale(1.1); /* Slight scale-up on hover */
+    }
+    
+    /* Tooltip styles */
+    .pagination a::after {
+        content: attr(data-tooltip); /* Uses the data-tooltip attribute for content */
+        position: absolute;
+        bottom: 40px; /* Position above the circle */
+        background-color:rgb(17, 51, 66);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease;
+        pointer-events: none; /* Prevents tooltip from interfering with hover */
+    }
+
+    
+    .pagination a:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0); /* New: Slide up into place */
+    }
+    
+    /* Active page styling */
+    .pagination a.active {
+        background-color: #f39c12; /* Orange to indicate current page */
+        transform: scale(1.2); /* Slightly larger for emphasis */
+    }
+
+    .pagination a:last-child {
+        width: 110px;
+        font-size: 18px;
+        height: 60px;
+        padding: 10px;
+        top: -1140px;
+        left: 420px;
+        background: linear-gradient(to bottom,rgb(214, 89, 50), #D45D2C);
+        font-family: 'Roboto', 'Arial', sans-serif;
+        color:rgba(255, 255, 255, 0.93);
+        font-size: 18px;
+        border-radius: 15px;
+        text-align: center;
+        transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        box-shadow: 5px 5px 15px rgba(241, 234, 234, 0.3);
+        cursor: pointer;
+        white-space: nowrap; /* Prevent text wrapping */
+        position: absolute;
+    }
+
+    /* Remove the tooltip for the last anchor tag */
+    .pagination a:last-child::after {
+        content: none; /* Disable the tooltip content */
+    }
+
+    .pagination a:last-child:hover::after {
+        opacity: 0; /* Ensure the tooltip stays hidden on hover */
+        visibility: hidden;
+    }
+    
+
+    
+    .custom-hr-2{
+        position: absolute; /* Adjust position if needed */
+        top: -22px;         /* Distance from the top */
+        left: -260px;         /* Distance from the left */
+        width: 18%;         /* Length of the line */
+        height: 1px;        /* Thickness */
+        background-color:rgba(73, 72, 68, 0.4); /* Change to any color */
+        border-radius: 10px; /* Makes the edges round */
+        border: none; /* Remove default border */
+    }
+    .vertical-line-2 {
+        width: 100px;   /* Thickness of the vertical line */
+        height: 680px; /* Set the height of the vertical line */
+        background-color: rgb(73, 72, 68, 0.4));
+        position: absolute;
+        top: -18px;   /* Aligns it to the end of the horizontal line */
+        left: -260px; /* Moves it to the exact end of the horizontal line */
+        border-radius: 10px;
+    }
+
+    /* CHANGE MADE: Added styles for the Symptom Checker modal */
+    .symptom-checker-modal {
+        display: none;
+        position: absolute;
+        top: 380px;
+        left: 74px; /* Positioned just beside the Symptom Checker link */
+        width: 300px;
+        background:rgba(239, 244, 248, 0.97);
+        border-radius: 0px 16px 0px 18px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        padding: 20px;
+        z-index: 10;
+    }
+
+    .symptom-checker-modal h3 {
+        margin-top: 0;
+        color: #2e7d32;
+        font-family: 'Nunito', sans-serif;
+        font-size: 18px;
+    }
+
+    .symptom-checker-modal .close-btn {
+        position: absolute;
+        top: 10px;
+        border: 4px;
+        right: 10px;
+        font-size: 20px;
+        cursor: pointer;
+        color: #333;
+        border-radius: 5px;
+    }
+
+    .symptom-checker-modal input,
+    .symptom-checker-modal textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    .symptom-checker-modal textarea {
+        height: 80px;
+        resize: none;
+    }
+
+    .symptom-checker-modal button {
+        width: 100%;
+        padding: 10px;
+        background: #3498db;
+        color:rgba(255, 255, 255, 0.49);
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-family: 'Nunito', sans-serif;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .symptom-checker-modal button:hover {
+        background: #2980b9;
+    }
+
+    .symptom-checker-modal .results {
+        margin-top: 15px;
+        padding: 10px;
+        background: #f9f9f9;
+        border-radius: 4px;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 14px;
+        color: #333;
+    }
+
+    .symptom-checker-modal .results ul {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .symptom-checker-modal .results li {
+        margin-bottom: 5px;
+    }
+
+    .symptom-checker-modal .error {
+        color: #d32f2f;
+        font-size: 14px;
+        text-align: center;
+    }
+    
+    /* --- CHANGE APPLIED: Renamed .modal-backdrop to .symptom-checker-overlay --- */
+    .symptom-checker-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(214, 209, 209, 0.44);
+        z-index: 9;
+    }
+
+    /* --- CHANGE MODIFIED: Adjusted display-results-container positioning --- */
+    .display-results-container {
+        display: none;
+        position: absolute; /* Changed to fixed for viewport centering */
+        top: 250px;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-image: url("https://www.woah.org/app/themes/woah/dist/images/newsletter-bg.jpg");
+        #background: url('https://www.transparenttextures.com/patterns/wood-pattern.png'), #f4e4bc;
+        border: 3px solid rgb(182, 138, 18);
+        border-radius: 10px;
+        padding: 20px;
+        max-width: 500px;
+        width: 90%;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        z-index: 102;
+        animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .display-results-container.show {
+        display: block;
+    }
+
+    .display-results-container h3 {
+        color: chocolate;
+        font-family: 'Nunito', sans-serif;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        text-align: center;
+    }
+    .display-results-container ul {
+        padding-left: 0; /* Reset default padding */
+        margin-left: 15px; /* Shift the list to the right */
+        list-style: none; /* Remove default bullets */
+    }
+
+    .symptom-result {
+        background: #fff;
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        border-left: 4px solid rgb(40, 167, 135);
+        max-height: 200px;
+        overflow-y: auto;
+        margin-right: 15px; /* Shift each box to the right */
+    }
+
+    .symptom-result p {
+        color: #333;
+        font-family: 'Montserrat', sans-serif;
+        margin: 5px 0;
+    }
+    /* --- CHANGE ADDED: Style for action-to-take --- */
+    .symptom-result .action-to-take {
+        color: rgb(40, 167, 135);
+        font-style: italic;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        border-top: 1px solid #ddd;
+        padding-top: 5px;
+        padding-left: 20px; /* Ensure space for numbers */
+    }
+    .symptom-result .action-to-take li {
+        margin-bottom: 5px; /* Space between list items */
+    }
+
+    .contact-btn {
+        background-color: rgb(40, 167, 135);
+        color: white;
+        padding: 8px 15px;
+        border-radius: 5px;
+        text-decoration: none;
+        display: inline-block;
+        margin-top: 10px;
+        font-family: 'Nunito', sans-serif;
+        transition: background-color 0.3s;
+    }
+
+    .contact-btn:hover {
+        background-color: rgb(32, 134, 108);
+    }
+
+    .display-results-container .close-btn {
+        position: absolute;
+        top: 8px;
+        border: none;
+        border-radius: 5px;
+        right: 35px;
+        font-size: 1.5rem;
+        color: chocolate;
+        cursor: pointer;
+    }
+
+    .search-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+    }
+
+    .search-overlay.show {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translate(-50%, -60%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+
+
+    /* CHANGE: Added new class for Search Vet Modal */
+    .vet-search-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+    }
+    
+
+
+</style>
+</head>
+<body>
+
+<!-- Vet Cards -->
+
+<div class="container">
+
+
+    <img src="https://media.istockphoto.com/id/1205560316/photo/smart-agritech-livestock-farming.jpg?s=612x612&w=0&k=20&c=Dv1kEQYiKalRSaeqDyFjFa54Gj6NKKOrx9Muk1bBlCg="
+        style="border: none; position: absolute; top: -200px; left: -70px; width: 264px; height: 122px; border-radius: 10px; opacity: 0.50;">
+
+    <p class="text-left" style="font-weight: bold; color: chocolate; font-size: 14px; top: -158px; left: 640px; position: absolute; font-family: 'Montserrat', sans-serif; font-size: 1.0rem;">LAP-PLATFORM</p>
+    <p class="text-left" style="font-weight: bold; color: chocolate; font-size: 38px; left: 640px; top: -140px; position: absolute; font-family: 'Nunito', sans-serif; font-size: 2.5rem;">VET SERVICES</p>
+        
+
+    <a href="{{ url_for('home_page') }}">
+        <div class="small-box" style="width: 100px; height: 40px; position: absolute; top: -30px; left: -40px;">Home</div>
+    </a>
+
+    <!-- CHANGE MADE: Modified the Symptom Checker link to open a modal instead of navigating -->
+    <a href="#" onclick="openSymptomChecker(event)">
+        <div class="small-box" style="width: 100px; height: 60px; position: absolute; top: 40px; left: -40px;">Symptom Checker</div>
+    </a>
+    <!-- END CHANGE -->
+    
+    <a href="#" onclick="openSearchVetModal()">
+        <div class="small-box" style="width: 100px; height: 80px; position: absolute; top: 120px; left: -40px;">Search for Vet</div>
+    </a>
+
+
+    <a href="{{ url_for('connect_farmers') }}">
+        <div class="small-box" style="width: 110px; height: 80px; position: absolute; top: 200px; left: -40px;">Farmers Community</div>
+    </a>
+
+    <hr style="position: absolute; top: 100px; left: 100px;>"
+
+    <p></p>
+
+    <br>
+    <hr class="custom-hr"/>
+
+    
+    
+    <div class="cards-wrapper">
+        <!-- Card 1 -->
+        <div class="doctor-card" data-vet-id="1" data-vet-name="Morgan Dayj">
+            <div class="doctor-image">
+                <img src="https://media.istockphoto.com/id/1794396556/photo/cow-farm-tablet-and-man-in-a-countryside-with-farming-and-animal-for-agriculture-monitoring.webp?a=1&b=1&s=612x612&w=0&k=20&c=BRuXNppfy24KaEX7_u7NnZKTjXpXPxGvLEBB32k5I0M=" 
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Morgan Dayj</h3>
+                <p class="specialty" style="font-weight: bold;">Avian Influenza Specialist<span class="rating">5 (45 reviews)</span></p>
+                <ul class="details">
+                    <li>KMTC Animal Hospital</li>
+                    <li>15 years experience</li>
+                    <li>Next available: Tuesday, 9:00 AM</li>
+                    <li>Open to all animals</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 2 -->
+        <div class="doctor-card" data-vet-id="2" data-vet-name="Maxwell Aray">
+            <div class="doctor-image">
+                <img src="https://media.istockphoto.com/id/1356555977/photo/shot-of-a-unrecognizable-veterinarian-putting-a-bandage-on-a-horse-on-a-farm.webp?a=1&b=1&s=612x612&w=0&k=20&c=17kwMFGflbYoXe_3ljZ4cwov5OBHIL62PcG7eHFnVQ0=" 
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Maxwell Aray</h3>
+                <p class="specialty" style="font-weight: bold;">Anthrax Specialist<span class="rating">5 (38 reviews)</span></p>
+                <ul class="details">
+                    <li>Ndakaini Vets Clinics</li>
+                    <li>7 years experience</li>
+                    <li>Next available: Wednesday, 9:00 AM</li>
+                    <li>Open to all Animals</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 3 -->
+        <div class="doctor-card" data-vet-id="3" data-vet-name="Jelani Ngige">
+            <div class="doctor-image">
+                <img src="https://media.istockphoto.com/id/1371820934/photo/contemporary-young-veterinarian-bending-over-desk-while-examining-dachshund.webp?a=1&b=1&s=612x612&w=0&k=20&c=CZvKbUBcr5MJlTVn7Mi8MFnFXTtuodyxYRrEhy59jek="
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Jelani Ngige</h3>
+                <p class="specialty" style="font-weight: bold;">Foot And Mouth Specialist(FMD) <span class="rating">4.5 (32 reviews)</span></p>
+                <ul class="details">
+                    <li>Nakuru Vets</li>
+                    <li>9 years experience</li>
+                    <li>Next available: Monday, 8:00 AM</li>
+                    <li>Open to domestic-hoofed animals</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 4 -->
+        <div class="doctor-card" data-vet-id="4" data-vet-name="Zara Michaels">
+            <div class="doctor-image">
+                <img src="https://images.unsplash.com/photo-1700665537604-412e89a285c3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8dmV0cyUyMGxvb2tpbmclMjBhZnRlciUyMGFuaW1hbHN8ZW58MHx8MHx8fDA%3D"
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Zara Michaels</h3>
+                <p class="specialty" style="font-weight: bold;">Mad Cow Disease(BVN) <span class="rating">4.8 (40 reviews)</span></p>
+                <ul class="details">
+                    <li>Kenyatta Veterinary Practice</li>
+                    <li>10 years experience</li>
+                    <li>Next available: Thursday, 10:00 AM</li>
+                    <li>Available to all Mammals</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Card 5 -->
+        <div class="doctor-card" data-vet-id="5" data-vet-name="Jean Belarus">
+            <div class="doctor-image">
+                <img src="https://media.istockphoto.com/id/1434687410/photo/portrait-of-happy-and-successful-african-american-doctor-man-working-inside-office-clinic.webp?a=1&b=1&s=612x612&w=0&k=20&c=9poWMqMdL4tiFlfB4oR3ZJOrKrc56TtuHqOzuI-vrl0="
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Jean Belarus</h3>
+                <p class="specialty" style="font-weight: bold;">Respiratory Diseases Specialist<span class="rating">4.7 (35 reviews)</span></p>
+                <ul class="details">
+                    <li>Naivasha Mammal Center</li>
+                    <li>8 years experience</li>
+                    <li>Next available: Friday, 9:00 AM<br>Monday</li>
+                    <li>Accepting new patients</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Card 6 -->
+        <div class="doctor-card" data-vet-id="6" data-vet-name="Clement Mbatia">
+            <div class="doctor-image">
+                <img src="https://media.istockphoto.com/id/1425798958/photo/photo-of-confident-female-doctor-in-hospital-looking-at-camera-with-smile.webp?a=1&b=1&s=612x612&w=0&k=20&c=2L3P5AC7hLyPdqo_8A5NybN_5QgsUNd49hzR2dYn5hQ="
+                    style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">Clement Mbatia</h3>
+                <p class="specialty" style="font-weight: bold;">Brucellosis Specialist <span class="rating">4.7 (35 reviews)</span></p>
+                <ul class="details">
+                    <li>Nakuru-Rongai Mammal Clinic</li>
+                    <li>8 years experience</li>
+                    <li>Next available: Friday, 9:00 AM <br>Saturday<br>Tuesday's</li>
+                    <li>Open to all Animals</li>
+                </ul>
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                </div>
+            </div>
+        </div>
+
+        <h2>Licensed Vets in Kenya</h2>
+        <p style="position: absolute; bottom: -40px;">Browse the official <a href="https://www.kenyavetboard.or.ke/" target="_blank">Kenya Veterinary Board (KVB)</a> directory for certified vets.</p><br>
+        <p style="position: absolute; bottom: -70px;">Or check out the <a href="https://www.kenyavets.org/" target="_blank">Kenya Veterinary Association (KVA)</a> for vet events and services.</p>
+
+
+        <!-- Navigation -->
+        <div class="pagination">
+
+            <hr class="custom-hr-2">
+            <div class="vertical-line-2"></div>
+            <a href="{{ url_for('nearby_vets') }}" data-tooltip="Current Page" class="active">1</a>
+            <a href="{{ url_for('nearby_vets_2') }}" data-tooltip="Go to Next Page">2</a>
+            <a href="{{ url_for('nearby_vets_3') }}" data-tooltip="Go to Next Page">3</a>
+            <a href="{{ url_for('add_vet') }}" data-tooltip="Go to Next Page">Add Vet</a>
+        </div>
+    </div>
+
+
+    
+
+    <!-- --- CHANGE MODIFIED: Moved displayResultsContainer outside cards-wrapper --- -->
+    <div id="displayResultsContainer" class="display-results-container">
+        <span class="close-btn" onclick="closeDisplayResults()">×</span>
+        <h3>Symptom Checker Results</h3>
+        <div id="searchResultsContent"></div>
+    </div>
+    <div id="searchOverlay" class="search-overlay"></div>
+
+
+</div>
+
+
+
+<!-- CHANGE MADE: Added Symptom Checker Modal to support symptom search and illness suggestion -->
+<div id="symptomCheckerModal" class="symptom-checker-modal">
+    <span class="close-btn" onclick="closeSymptomChecker()">×</span>
+    <h3>Symptom Checker</h3>
+    <input type="text" id="animalName" placeholder="Enter animal name (e.g., Cattle, Poultry)">
+    <textarea id="symptoms" placeholder="Enter symptoms (comma-separated, up to 7, e.g., fever, cough, lameness)"></textarea>
+    <button onclick="searchSymptoms()">Search</button>
+<div id="symptomResults" class="results"></div>
+<!-- END CHANGE -->
+</div>
+
+
+
+
+
+<!-- Schedule Modal -->
+<div id="scheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <h3>Schedule Appointment with <span id="modalVetName"></span></h3>
+        <form id="scheduleForm" onsubmit="submitAppointment(event)">
+            <label for="appointmentDate">Select Date:</label>
+            <input type="date" id="appointmentDate" name="appointmentDate" required>
+
+            <label for="appointmentTime">Select Time:</label>
+            <select id="appointmentTime" name="appointmentTime" required>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+            </select>
+
+            <label for="animalType">Animal Type:</label>
+            <input type="text" id="animalType" name="animalType" placeholder="e.g., Dog, Cow, Horse" required>
+
+            <label for="ownerName">Your Name:</label>
+            <input type="text" id="ownerName" name="ownerName" required>
+
+            <label for="ownerEmail">Your Email:</label>
+            <input type="email" id="ownerEmail" name="ownerEmail" required>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeProfileModal()">×</span>
+        <h3>Profile of <span id="modalProfileVetName"></span></h3>
+        <div id="vetProfileDetails">
+            <p><strong>Specialty:</strong> <span id="modalVetSpecialty"></span></p>
+            <p><strong>Clinic:</strong> <span id="modalVetClinic"></span></p>
+            <p><strong>Experience:</strong> <span id="modalVetExperience"></span></p>
+            <p><strong>Availability:</strong> <span id="modalVetAvailability"></span></p>
+            <p><strong>Accepting:</strong> <span id="modalVetAccepting"></span></p>
+            <p><strong>Rating:</strong> <span id="modalVetRating"></span></p>
+        </div>
+    </div>
+</div>
+
+<!-- Search Vet Modal -->
+<!-- CHANGE: Renamed class from "modal" to "vet-search-modal" -->
+<div id="searchVetModal" class="vet-search-modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeSearchVetModal()">×</span>
+        <h3>Search for a Vet</h3>
+        <form id="searchVetForm" onsubmit="submitVetSearch(event)">
+            <label for="vetName">Vet Name (Optional):</label>
+            <input type="text" id="vetName" name="vetName" placeholder="e.g., Dr. John">
+
+            <label for="specialty">Specialty (Disease Expertise, Optional):</label>
+            <input type="text" id="specialty" name="specialty" placeholder="e.g., Rift Valley Disease, Mastitis">
+
+            <label for="clinic">Locality (Clinic, Optional):</label>
+            <input type="text" id="clinic" name="clinic" placeholder="e.g., Nairobi Vet Clinic">
+
+            <label for="animalType">Type of Animal (Optional):</label>
+            <input type="text" id="animalType" name="animalType" placeholder="e.g., Dog, Cow, Parrot">
+
+            <button type="submit">Search</button>
+        </form>
+    </div>
+</div>
+
+
+
+<!-- --- CHANGE APPLIED: Renamed id and class to symptomCheckerOverlay --- -->
+<div id="symptomCheckerOverlay" class="symptom-checker-overlay"></div>
+<!-- --- END CHANGE --- -->
+
+
+
+
+    <!--
+    <button class="search-button" onclick="openSearch()">Search</button>
+
+    Floating Search Window
+    <div id="search-box" class="search-container">
+        <button class="close-btn" onclick="closeSearch()">X</button>
+        <h3>Search Animal</h3>
+        <input type="text" id="search-input" placeholder="Enter animal name..." oninput="fetchSearchResults()">
+        
+        <label for="sort">Sort by:</label>
+        <select id="sort" onchange="fetchSearchResults()">
+            <option value="price_asc">Price (Low to High)</option>
+            <option value="price_desc">Price (High to Low)</option>
+            <option value="rating_desc">Rating (High to Low)</option>
+            <option value="rating_asc">Rating (Low to High)</option>
+        </select>
+
+        <div class="search-results" id="search-results"></div>
+
+        <div class="pagination">
+            <button id="prev-page" onclick="changePage(-1)" disabled>Prev</button>
+            <button id="next-page" onclick="changePage(1)" disabled>Next</button>
+        </div>
+
+    </div>
+    -->
+    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const cards = document.querySelectorAll(".doctor-card");
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add("show");
+                }, index * 200);
+            });
+        });
+    
+        // Schedule Modal Functionality
+        let currentVetId = null;
+    
+        function openScheduleModal(button) {
+            const card = button.closest('.doctor-card');
+            const vetName = card.getAttribute('data-vet-name');
+            currentVetId = card.getAttribute('data-vet-id');
+    
+            document.getElementById('modalVetName').textContent = vetName;
+            document.getElementById('scheduleModal').style.display = 'flex';
+        }
+    
+        function closeModal() {
+            document.getElementById('scheduleModal').style.display = 'none';
+            document.getElementById('scheduleForm').reset();
+        }
+    
+        function submitAppointment(event) {
+            event.preventDefault();
+    
+            const appointmentDate = document.getElementById('appointmentDate').value;
+            const appointmentTime = document.getElementById('appointmentTime').value;
+            const animalType = document.getElementById('animalType').value;
+            const ownerName = document.getElementById('ownerName').value;
+            const ownerEmail = document.getElementById('ownerEmail').value;
+    
+            console.log({
+                vetId: currentVetId,
+                vetName: document.getElementById('modalVetName').textContent,
+                appointmentDate,
+                appointmentTime,
+                animalType,
+                ownerName,
+                ownerEmail
+            });
+    
+            alert(`Appointment booked successfully with ${document.getElementById('modalVetName').textContent} on ${appointmentDate} at ${appointmentTime} for your ${animalType}!`);
+            closeModal();
+        }
+    
+        // View Profile Functionality
+        function viewProfile(button) {
+            const card = button.closest('.doctor-card');
+            const vetName = card.getAttribute('data-vet-name');
+            const specialty = card.querySelector('.specialty').textContent.split('★')[0].trim();
+            const details = card.querySelectorAll('.details li');
+            const clinic = details[0].textContent;
+            const experience = details[1].textContent;
+            const availability = details[2].textContent.replace('Next available: ', '');
+            const accepting = details[3].textContent;
+            const rating = card.querySelector('.rating').textContent;
+    
+            document.getElementById('modalProfileVetName').textContent = vetName;
+            document.getElementById('modalVetSpecialty').textContent = specialty;
+            document.getElementById('modalVetClinic').textContent = clinic;
+            document.getElementById('modalVetExperience').textContent = experience;
+            document.getElementById('modalVetAvailability').textContent = availability;
+            document.getElementById('modalVetAccepting').textContent = accepting;
+            document.getElementById('modalVetRating').textContent = rating;
+    
+            document.getElementById('profileModal').style.display = 'flex';
+        }
+    
+        function closeProfileModal() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+    
+        function openSearchVetModal() {
+            console.log("Opening Search Vet Modal"); // CHANGE: Added debugging log
+            document.getElementById('searchVetModal').style.display = 'flex';
+        }
+    
+        function closeSearchVetModal() {
+            console.log("Closing Search Vet Modal"); // CHANGE: Added debugging log
+            document.getElementById('searchVetModal').style.display = 'none';
+            document.getElementById('searchVetForm').reset();
+        }
+    
+        function submitVetSearch(event) {
+            event.preventDefault();
+            console.log("Search button clicked, submitting vet search"); // CHANGE: Added debugging log
+    
+            const vetName = document.getElementById('vetName').value.trim();
+            const specialty = document.getElementById('specialty').value.trim();
+            const clinic = document.getElementById('clinic').value.trim();
+            const animalType = document.getElementById('animalType').value.trim(); // CHANGE: Replaced 'rates' with 'animalType' to match form fields
+    
+            console.log("Search criteria:", { vetName, specialty, clinic, animalType }); // CHANGE: Updated debugging log to include animalType
+    
+            fetch('/search_vets', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    vetName: vetName,
+                    specialty: specialty,
+                    clinic: clinic,
+                    animalType: animalType // CHANGE: Replaced 'rates' with 'animalType' in the request body
+                })
+            })
+            .then(response => {
+                console.log("Fetch response status:", response.status); // CHANGE: Added debugging log
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Fetch data:", data); // CHANGE: Added debugging log
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+    
+                const cardsWrapper = document.querySelector('.cards-wrapper');
+                cardsWrapper.innerHTML = '';
+    
+                if (data.vets.length === 0) {
+                    cardsWrapper.innerHTML = '<p>No vets found matching your criteria.</p>';
+                } else {
+                    data.vets.forEach(vet => {
+                        const card = document.createElement('div');
+                        card.className = 'doctor-card show';
+                        card.setAttribute('data-vet-id', vet.id);
+                        card.setAttribute('data-vet-name', vet.name);
+                        card.innerHTML = `
+                            <div class="doctor-image">
+                                <img src="${vet.image_url}" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                                <div class="price-tag">$${vet.price}</div>
+                                <div class="video-icon"></div>
+                            </div>
+                            <div class="doctor-info">
+                                <h3 class="doctor-name">${vet.name}</h3>
+                                <p class="specialty" style="font-weight: bold;">${vet.specialty}<span class="rating">${vet.rating}</span></p>
+                                <ul class="details">
+                                    <li>${vet.clinic}</li>
+                                    <li>${vet.experience} years experience</li>
+                                    <li>Next available: ${vet.availability}</li>
+                                    <li>${vet.accepting}</li>
+                                </ul>
+                                <div class="buttons">
+                                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                                </div>
+                            </div>
+                        `;
+                        cardsWrapper.appendChild(card);
+                    });
+                }
+    
+                document.querySelector('.pagination').style.display = 'none';
+                closeSearchVetModal();
+            })
+            .catch(error => {
+                console.error('Error searching vets:', error);
+                alert('Failed to search vets: ' + error.message);
+            });
+        }
+    
+        // Symptom Checker Functions
+        function openSymptomChecker(event) {
+            event.preventDefault();
+            const modal = document.getElementById('symptomCheckerModal');
+            const overlay = document.getElementById('symptomCheckerOverlay');
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+            document.getElementById('symptomResults').innerHTML = '';
+        }
+    
+        function closeSymptomChecker() {
+            const modal = document.getElementById('symptomCheckerModal');
+            const overlay = document.getElementById('symptomCheckerOverlay');
+            modal.style.display = 'none';
+            overlay.style.display = 'none';
+            document.getElementById('animalName').value = '';
+            document.getElementById('symptoms').value = '';
+            document.getElementById('symptomResults').innerHTML = '';
+        }
+    
+        function searchSymptoms() {
+            const animalName = document.getElementById('animalName').value;
+            const symptoms = document.getElementById('symptoms').value;
+            const resultsDiv = document.getElementById('searchResultsContent');
+    
+            if (!resultsDiv) {
+                console.error('DOM element not found: searchResultsContent missing');
+                return;
+            }
+    
+            if (!animalName || !symptoms) {
+                resultsDiv.innerHTML = `<p class="error" style="color: #666; font-family: 'Montserrat', sans-serif; text-align: center;">Please enter both animal name and symptoms.</p>`;
+                showResultsContainer();
+                return;
+            }
+    
+            fetch('/search_symptoms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    animal_name: animalName,
+                    symptoms: symptoms
+                })
+            })
+            .then(response => {
+                console.log('Response Status:', response.status);
+                console.log('Response Headers:', response.headers);
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server returned ${response.status}: ${text}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                resultsDiv.innerHTML = '';
+                if (data.error) {
+                    resultsDiv.innerHTML = `<p class="error" style="color: #666; font-family: 'Montserrat', sans-serif; text-align: center;">${data.error}</p>`;
+                } else if (!data.diseases || data.diseases.length === 0) {
+                    resultsDiv.innerHTML = `<p style="color: #666; font-family: 'Montserrat', sans-serif; text-align: center;">No matching diseases found.</p>`;
+                } else {
+                    const ul = document.createElement('ul');
+                    data.diseases.forEach(disease => {
+                        const li = document.createElement('li');
+                        li.className = 'symptom-result';
+    
+                        const actions = disease.action_to_take ? disease.action_to_take.split('. ').filter(action => action.trim() !== '') : [];
+                        const actionList = actions.length > 0
+                            ? `<ol class="action-to-take">${actions.map(action => `<li>${action}${action.endsWith('.') ? '' : '.'}</li>`).join('')}</ol>`
+                            : '<p class="action-to-take"><strong>Action to Take:</strong> Consult a veterinarian for advice.</p>';
+    
+                        li.innerHTML = `
+                            <p><strong>${disease.name}</strong> (${disease.animal_type})</p>
+                            <p>${disease.matching_symptoms} matching symptom(s)</p>
+                            ${actionList}
+                        `;
+                        ul.appendChild(li);
+                    });
+                    resultsDiv.appendChild(ul);
+                }
+                showResultsContainer();
+            })
+            .catch(error => {
+                console.error('Fetch Error:', error);
+                resultsDiv.innerHTML = `<p class="error" style="color: #666; font-family: 'Montserrat', sans-serif; text-align: center;">Error searching symptoms: ${error.message}</p>`;
+                showResultsContainer();
+            });
+        }
+    
+        function showResultsContainer() {
+            const container = document.getElementById('displayResultsContainer');
+            const overlay = document.getElementById('searchOverlay');
+            if (container && overlay) {
+                container.classList.add('show');
+                overlay.classList.add('show');
+            } else {
+                console.error('displayResultsContainer or searchOverlay not found');
+            }
+        }
+    
+        function closeDisplayResults() {
+            document.getElementById('displayResultsContainer').classList.remove('show');
+            document.getElementById('searchOverlay').classList.remove('show');
+        }
+    
+        document.getElementById('searchOverlay').addEventListener('click', closeDisplayResults);
+    
+        function clearSearch() {
+            window.location.reload();
+        }
+    
+        // Update window.onclick to close the new modal
+        window.onclick = function(event) {
+            const scheduleModal = document.getElementById('scheduleModal');
+            const profileModal = document.getElementById('profileModal');
+            const searchVetModal = document.getElementById('searchVetModal');
+            const symptomCheckerModal = document.getElementById('symptomCheckerModal');
+            if (event.target === scheduleModal) {
+                closeModal();
+            }
+            if (event.target === profileModal) {
+                closeProfileModal();
+            }
+            if (event.target === searchVetModal) {
+                closeSearchVetModal();
+            }
+            if (event.target === symptomCheckerModal) {
+                closeSymptomChecker();
+            }
+        };
+    </script>
+</body>
+
+
+{% endblock %}
+
+

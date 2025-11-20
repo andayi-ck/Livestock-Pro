@@ -1,0 +1,441 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livestock Tips</title>
+    
+    <style>
+        .floating-windows-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .floating-window {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+            position: relative;
+            transition: opacity 0.3s ease;
+            min-height: 150px;
+            opacity: 0;
+        }
+        
+        .floating-window.tips-window {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), 
+                            url("https://images.unsplash.com/photo-1596854307943-279e1c90f0a4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080");
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .floating-window.general-info-window {
+            background-color: #f5f5dc;
+        }
+        
+        .floating-window.visible {
+            opacity: 1;
+        }
+        
+        .floating-window h2 {
+            font-size: 18px;
+            margin: 0 0 8px;
+            text-align: center;
+            color: #4caf50;
+            text-transform: uppercase;
+        }
+        
+        .floating-window hr {
+            border: 0;
+            height: 1px;
+            background: #ccc;
+            margin: 8px 0;
+        }
+        
+        #tips-container, #general-info-container {
+            max-height: 120px;
+            overflow-y: auto;
+            padding: 5px;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        
+        #tips-container.fade, #general-info-container.fade {
+            opacity: 0;
+        }
+        
+        .tip-item, .info-item {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-left: 3px solid #4caf50;
+            border-radius: 4px;
+            padding: 8px;
+            margin: 5px 0;
+            font-size: 13px;
+        }
+        
+        .tip-item h3, .info-item h3 {
+            margin: 0 0 4px;
+            font-size: 15px;
+            color: #333;
+        }
+        
+        .tip-item p, .info-item p {
+            margin: 0 0 4px;
+            line-height: 1.3;
+        }
+        
+        .tip-meta, .info-meta {
+            color: #666;
+            font-size: 11px;
+            display: block;
+        }
+        
+        .loading, .error, .no-info {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            padding: 8px;
+        }
+        
+        .error {
+            color: #b71c1c;
+        }
+        
+        .form-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+        
+        .form-container h2 {
+            font-size: 20px;
+            color: #4caf50;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .form-container label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        
+        .form-container input[type="text"],
+        .form-container textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .form-container textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .form-container input[type="submit"] {
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        .form-container input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        
+        .form-container .error {
+            color: #b71c1c;
+            font-size: 12px;
+        }
+        
+        .flash-message {
+            text-align: center;
+            padding: 10px;
+            margin: 10px auto;
+            max-width: 600px;
+            border-radius: 4px;
+        }
+        
+        .flash-message.success {
+            background-color: #dff0d8;
+            color: #3c763d;
+        }
+        
+        .flash-message.error {
+            background-color: #f2dede;
+            color: #a94442;
+        }
+        
+        .debug-message {
+            text-align: center;
+            color: #555;
+            margin: 10px auto;
+            max-width: 600px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .error-message {
+            background-color: #f8e1e1; /* Light red background for error */
+            border: 2px solid #8b4513; /* Barn-red border */
+            border-radius: 6px;
+            padding: 12px;
+            margin: 15px auto;
+            max-width: 600px;
+            color:rgb(0, 118, 139); /* Dark red text */
+            font-size: 15px;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .error-message::before {
+            content: "⚠️"; /* Warning emoji as an icon */
+            font-size: 18px;
+            margin-right: 8px;
+        }
+        
+        .go-home-button {
+            background-color: #4caf50; /* Green, matching form submit button */
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .go-home-button:hover {
+            background-color: #45a049; /* Slightly darker green on hover */
+        }
+        @media (max-width: 768px) {
+            .floating-windows-container, .form-container, .debug-message, .error-message {
+                padding: 0 8px;
+                margin: 10px auto;
+            }
+            .floating-window {
+                max-width: 100%;
+            }
+            .go-home-button {
+                padding: 6px 6px;
+                font-size: 13px;
+                
+            }
+        }
+
+        .error-message {
+            /* Existing styles */
+            animation: fadeIn 0.5s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Flash Messages -->
+    {% for message in get_flashed_messages(with_categories=true) %}
+        <div class="flash-message {{ message[0] }}">{{ message[1] }}</div>
+    {% endfor %}
+
+    <!-- Debug Message -->
+    {% if current_user.is_authenticated %}
+        <div class="debug-message">Logged in as {{ current_user.username }} with role {{ current_user.role }}.</div>
+    {% else %}
+        <div class="error-message">Not logged in. Please log in as a vet to submit tips.</div>
+    {% endif %}
+
+    <!-- Tip Submission Form (for vets) -->
+    {% if current_user.is_authenticated and current_user.role == 'vet' %}
+    <div class="form-container">
+        <h2>Submit a Tip</h2>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div>
+                {{ form.title.label }}<br>
+                {{ form.title(size=50) }}<br>
+                {% for error in form.title.errors %}
+                    <span class="error">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+            <div>
+                {{ form.content.label }}<br>
+                {{ form.content(rows=5, cols=50) }}<br>
+                {% for error in form.content.errors %}
+                    <span class="error">{{ error }}</span><br>
+                {% endfor %}
+            </div>
+            <div>
+                {{ form.submit() }}
+                
+            </div>
+        </form>
+        <a href="{{ url_for('home_page') }}" class="go-home-button">Home</a>
+    </div>
+    {% else %}
+        <div class="error-message">
+            {% if current_user.is_authenticated %}
+                You are not a vet (role: {{ current_user.role }}). Only vets can submit tips.
+            {% else %}
+                Please log in as a vet to submit tips.
+            {% endif %}
+            Not logged in. Please log in as a vet to submit tips.
+            <a href="{{ url_for('home_page') }}" class="go-home-button">Go Home</a>
+        </div>
+    {% endif %}
+    
+    <!-- JavaScript -->
+    <script>
+        function fetchTips() {
+            const container = document.getElementById('tips-container');
+            const tipWindow = document.getElementById('tipWindow');
+            if (!container || !tipWindow) {
+                console.error('Tips container or window not found');
+                return;
+            }
+            container.classList.add('fade');
+            setTimeout(() => {
+                container.innerHTML = '<p class="loading">Loading tip...</p>';
+                fetch('/api/tips')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        container.innerHTML = '';
+                        if (data.error) {
+                            container.innerHTML = `<p class="no-info">${data.message}</p>`;
+                            return;
+                        }
+                        if (data.type !== 'tip') {
+                            console.warn('Unexpected item type in tips:', data);
+                            container.innerHTML = '<p class="error">Invalid tip data</p>';
+                            return;
+                        }
+                        const tipElement = document.createElement('div');
+                        tipElement.className = 'tip-item';
+                        tipElement.innerHTML = `
+                            <h3>${data.title}</h3>
+                            <p>${data.content}</p>
+                            <span class="tip-meta">Posted by ${data.author} on ${data.posted_at}</span>
+                        `;
+                        container.appendChild(tipElement);
+                        container.classList.remove('fade');
+                        tipWindow.classList.add('visible');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching tip:', error);
+                        container.innerHTML = `<p class="error">Failed to load tip: ${error.message}</p>`;
+                        container.classList.remove('fade');
+                        tipWindow.classList.add('visible');
+                    });
+            }, 300);
+        }
+        
+        function fetchGeneralInfo() {
+            const container = document.getElementById('general-info-container');
+            const generalTipWindow = document.getElementById('generalTipWindow');
+            if (!container || !generalTipWindow) {
+                console.error('General info container or window not found');
+                return;
+            }
+            container.classList.add('fade');
+            setTimeout(() => {
+                container.innerHTML = '<p class="loading">Loading info...</p>';
+                fetch('/api/general_info')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        container.innerHTML = '';
+                        if (data.error) {
+                            container.innerHTML = `<p class="no-info">${data.message}</p>`;
+                            return;
+                        }
+                        if (data.type !== 'info') {
+                            console.warn('Unexpected item type in general info:', data);
+                            container.innerHTML = `<p class="error">Invalid info data</p>`;
+                            return;
+                        }
+                        const infoElement = document.createElement('div');
+                        infoElement.className = 'info-item';
+                        infoElement.innerHTML = `
+                            <h3>${data.title} (${data.category})</h3>
+                            <p>${data.content}</p>
+                            <span class="info-meta">Added on ${data.created_at}</span>
+                        `;
+                        container.appendChild(infoElement);
+                        container.classList.remove('fade');
+                        generalTipWindow.classList.add('visible');
+                    })
+                    .catch(error => {
+                        console.error('Error fetching general info:', error);
+                        container.innerHTML = `<p class="error">Failed to load info: ${error.message}</p>`;
+                        container.classList.remove('fade');
+                        generalTipWindow.classList.add('visible');
+                    });
+            }, 300);
+        }
+        
+        function manageTipsCycle() {
+            const tipWindow = document.getElementById('tipWindow');
+            fetchTips();
+            setTimeout(() => {
+                tipWindow.classList.remove('visible');
+            }, 60000);
+        }
+        
+        function manageGeneralTipsCycle() {
+            const generalTipWindow = document.getElementById('generalTipWindow');
+            fetchGeneralInfo();
+            setTimeout(() => {
+                generalTipWindow.classList.remove('visible');
+            }, 80000);
+        }
+        
+        window.onload = function() {
+            manageTipsCycle();
+            manageGeneralTipsCycle();
+            setInterval(manageTipsCycle, 70000);
+            setInterval(manageGeneralTipsCycle, 90000);
+        };
+    </script>
+</body>
+</html>

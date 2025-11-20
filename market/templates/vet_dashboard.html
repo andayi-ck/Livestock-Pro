@@ -1,0 +1,63 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-4xl mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-6">Vet Dashboard</h1>
+
+  <!-- NEW CODE ADDED: Add Animal -->
+  <div class="bg-gray-100 p-4 rounded mb-6">
+    <h3 class="font-semibold mb-2">Add New Animal</h3>
+    <form method="POST" class="flex gap-2">
+      {{ form_animal.hidden_tag() }}
+      <input type="hidden" name="add_animal" value="1">
+      {{ form_animal.name(class="border p-2 flex-1 rounded") }}
+      {{ form_animal.submit(class="bg-green-600 text-white px-3 py-2 rounded") }}
+    </form>
+  </div>
+
+  <!-- NEW CODE ADDED: Add Vaccine -->
+  <div class="bg-white p-6 rounded shadow mb-8">
+    <h2 class="text-xl font-semibold mb-4">Add Vaccine</h2>
+    <form method="POST">
+      {{ form_vaccine.hidden_tag() }}
+      <input type="hidden" name="add_vaccine" value="1">
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          {{ form_vaccine.animal_id.label }}
+          <select name="animal_id" required class="border p-2 w-full mt-1 rounded">
+            <option value="">Select Animal</option>
+            {% for animal in animals %}
+              <option value="{{ animal.id }}">{{ animal.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div>{{ form_vaccine.vaccine_name.label }} {{ form_vaccine.vaccine_name(class="border p-2 w-full") }}</div>
+        <div>{{ form_vaccine.age_bracket.label }} {{ form_vaccine.age_bracket(class="border p-2 w-full") }}</div>
+        <div>{{ form_vaccine.next_due.label }} {{ form_vaccine.next_due(class="border p-2 w-full") }}</div>
+      </div>
+      <button type="submit" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded">
+        Add Vaccine
+      </button>
+    </form>
+  </div>
+
+  <!-- Due Vaccines -->
+  <div class="bg-red-50 p-6 rounded shadow">
+    <h2 class="text-xl font-semibold text-red-700 mb-4">Due Vaccines (Email Sent)</h2>
+    {% if due %}
+      <ul class="space-y-2">
+        {% for v in due %}
+          {% set animal = Animal.query.get(v.animal_id) %}
+          <li class="bg-white p-3 rounded shadow">
+            <strong>{{ animal.name }}</strong>: {{ v.vaccine_name }} → Due: {{ v.next_due }}
+            <span class="text-green-600 text-xs ml-2">Email Sent</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-600">No vaccines due today.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+

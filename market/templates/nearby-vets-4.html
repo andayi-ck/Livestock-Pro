@@ -1,0 +1,812 @@
+
+
+
+
+
+
+
+{% extends 'base.html' %}
+{% block title %}
+    LIVESTOCK MANAGEMENT SYSTEM
+{% endblock %}
+{% block content %}
+<style>
+    .small-box {
+        display: inline-block;
+        padding: 8px 16px;
+        border: 1px solid #fff;
+        border-radius: 20px;
+        background-color: transparent;
+        color: black;
+        font-size: 14px;
+        font-weight: 600;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        text-decoration: none;
+        transition: all 0.3s ease-in-out;
+    }
+    
+    .small-box:hover {
+        background-color: rgba(17, 163, 163, 0.2);
+        cursor: pointer;
+    }
+    
+    .container2 {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+        position: absolute;
+        top: 40px;
+        left: -50px
+    }
+
+    .container {
+        width: 100%;
+        margin: 0 auto;
+        position: absolute;
+        top: 280px;
+        left: 100px;
+    }
+
+    .custom-hr {
+        position: absolute;
+        top: -150px;
+        left: 240px;
+        width: 60%;
+        height: 3px;
+        background-color: rgb(182, 138, 18);
+        border-radius: 10px;
+        border: none;
+    }
+
+    .cards-wrapper {
+        position: absolute;
+        top: -40px;
+        left: 200px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: flex-start;
+    }
+
+    .doctor-card {
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        overflow: hidden;
+        transition: transform 0.2s;
+    }
+
+    .doctor-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .doctor-image {
+        width: 100%;
+        height: 150px;
+        position: relative;
+    }
+
+    .doctor-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: center;
+        display: block;
+    }
+
+    .price-tag {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #fff;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .price-tag::before {
+        margin-right: 2px;
+    }
+
+    .video-icon {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: #fff;
+        padding: 5px;
+        border-radius: 50%;
+        font-size: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .doctor-info {
+        padding: 15px;
+    }
+
+    .doctor-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+        margin: 0;
+    }
+
+    .specialty {
+        font-size: 14px;
+        color: #666;
+        margin: 5px 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .rating {
+        color: #f39c12;
+        margin-left: 5px;
+    }
+
+    .rating::before {
+        content: '★';
+        margin-right: 3px;
+    }
+
+    .details {
+        font-size: 14px;
+        color: #666;
+        margin: 10px 0;
+    }
+
+    .details li {
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+    }
+
+    .details li::before {
+        content: '○';
+        margin-right: 8px;
+        color: #3498db;
+        font-size: 10px;
+    }
+
+    .buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .schedule-btn, .profile-btn {
+        flex: 1;
+        padding: 8px;
+        border-radius: 4px;
+        text-align: center;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .schedule-btn {
+        background: #fff;
+        border: 1px solid #3498db;
+        color: #3498db;
+    }
+
+    .schedule-btn:hover {
+        background: #3498db;
+        color: #fff;
+    }
+
+    .profile-btn {
+        background: #3498db;
+        border: none;
+        color: #fff;
+    }
+
+    .profile-btn:hover {
+        background: #2980b9;
+    }
+
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1001;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        width: 400px;
+        max-width: 90%;
+        position: relative;
+    }
+
+    .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #333;
+    }
+
+    .modal-content h3 {
+        margin-top: 0;
+        font-family: 'Nunito', sans-serif;
+        color: chocolate;
+    }
+
+    .modal-content form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .modal-content label {
+        font-size: 14px;
+        color: #333;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .modal-content input,
+    .modal-content select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    .modal-content button {
+        padding: 10px;
+        background: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .modal-content button:hover {
+        background: #2980b9;
+    }
+
+    /* Floating Age Calculator Styles */
+    .floating-container {
+        position: fixed;
+        right: 20px;
+        top: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        z-index: 1000;
+        width: 300px;
+        height: auto;
+    }
+
+    .floating-container form {
+        position: relative;
+        height: 200px;
+    }
+
+    .floating-container label {
+        font-family: Georgia, serif;
+        color: #333;
+    }
+
+    .floating-container input[type="date"] {
+        font-family: Pacifico, cursive;
+        border: none;
+        background: transparent;
+        outline: none;
+        color: transparent;
+    }
+
+    .floating-container input[type="date"]:focus {
+        color: black;
+    }
+
+    .floating-container input[type="date"]:not(:focus):not(:valid) {
+        color: transparent;
+    }
+
+    .floating-container select {
+        font-family: Georgia, serif;
+        padding: 5px;
+        border-radius: 4px;
+    }
+
+    .floating-container button {
+        font-family: Georgia, serif;
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .floating-container button:hover {
+        background-color: #2980b9;
+    }
+
+    #resultBox {
+        font-family: Georgia, serif;
+        background: rgba(13, 170, 209, 0.7);
+        color: black;
+        padding: 10px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    /* Initial hidden state for animation */
+    .doctor-card {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+    }
+    
+    .doctor-card.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    
+    .search-container {
+        position: absolute;
+        top: 380px;
+        left: 1200px;
+        transform: translate(-50%, -50%) scale(0);
+        width: 280px;
+        background: white;
+        padding: 20px;
+        box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        opacity: 0;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .search-container.active {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    .close-btn {
+        background: white;
+        color: black;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        float: right;
+    }
+
+    input[type="text"], select {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .search-results {
+        margin-top: 15px;
+        text-align: left;
+    }
+
+    .pagination {
+        position: absolute;
+        bottom: -130px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 15px;
+    }
+    
+    .pagination a {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 30px;
+        background-color: #3498db;
+        color: #fff;
+        font-size: 14px;
+        font-weight: bold;
+        text-decoration: none;
+        border-radius: 50%;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        position: relative;
+    }
+    
+    .pagination a:hover {
+        background-color: #2980b9;
+        transform: scale(1.1);
+    }
+    
+    .pagination a::after {
+        content: attr(data-tooltip);
+        position: absolute;
+        bottom: 40px;
+        background-color: rgb(17, 51, 66);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease;
+        pointer-events: none;
+    }
+    
+    .pagination a:hover::after {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .pagination a.active {
+        background-color: #f39c12;
+        transform: scale(1.2);
+    }
+
+    .pagination a:last-child {
+        width: 50px;
+        font-size: 18px;
+        height: 40px;
+        padding: 10px;
+        top: -1140px;
+        left: 420px;
+        background: linear-gradient(to bottom,rgb(214, 89, 50), #D45D2C);
+        font-family: 'Roboto', 'Arial', sans-serif;
+        color:rgba(255, 255, 255, 0.93);
+        font-size: 18px;
+        border-radius: 15px;
+        text-align: center;
+        transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+        box-shadow: 5px 5px 15px rgba(241, 234, 234, 0.3);
+        cursor: pointer;
+        white-space: nowrap; /* Prevent text wrapping */
+        position: absolute;
+
+    }
+
+    /* Remove the tooltip for the last anchor tag */
+    .pagination a:last-child::after {
+        content: none; /* Disable the tooltip content */
+    }
+
+    .pagination a:last-child:hover::after {
+        opacity: 0; /* Ensure the tooltip stays hidden on hover */
+        visibility: hidden;
+    }
+
+    .edit-btn {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 4px;
+        margin-left: 5px;
+    }
+    .edit-btn:hover {
+        background-color: #45a049;
+    }
+
+    /* New styles for reviews */
+    .reviews {
+        font-style: italic;
+        color: #666;
+        font-size: 13px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-left: 3px solid #2e7d32; /* Green border to highlight reviews */
+        padding-left: 10px;
+    }
+    
+
+    
+</style>
+<body>
+<div class="container">
+    <img src="https://media.istockphoto.com/id/1205560316/photo/smart-agritech-livestock-farming.jpg?s=612x612&w=0&k=20&c=Dv1kEQYiKalRSaeqDyFjFa54Gj6NKKOrx9Muk1bBlCg="
+        style="border: none; position: absolute; top: -200px; left: -70px; width: 264px; height: 122px; border-radius: 10px; opacity: 0.50;">
+
+    <p class="text-left" style="font-weight: bold; color: chocolate; font-size: 14px; top: -158px; left: 640px; position: absolute; font-family: 'Montserrat', sans-serif; font-size: 1.0rem;">LAP-PLATFORM</p>
+    <p class="text-left" style="font-weight: bold; color: chocolate; font-size: 38px; left: 640px; top: -140px; position: absolute; font-family: 'Nunito', sans-serif; font-size: 2.5rem;">VET SERVICES</p>
+        
+    <a href="{{ url_for('home_page') }}">
+        <div class="small-box" style="width: 100px; height: 40px; position: absolute; top: -30px; left: -40px;">Home</div>
+    </a>
+    
+    <a href="{{ url_for('nearby_vets') }}">
+        <div class="small-box" style="width: 100px; height: 60px; position: absolute; top: 40px; left: -40px;">Symptom Checker</div>
+    </a>
+    
+    <a href="{{ url_for('nearby_vets') }}">
+        <div class="small-box" style="width: 100px; height: 80px; position: absolute; top: 120px; left: -40px;">Search for Vet</div>
+    </a>
+
+    <a href="{{ url_for('connect_farmers') }}">
+        <div class="small-box" style="width: 110px; height: 80px; position: absolute; top: 200px; left: -40px;">Farmers Community</div>
+    </a>
+
+    <hr class="custom-hr">
+
+    <div class="cards-wrapper">
+        {% for vet in vets.items %}
+        <div class="doctor-card" data-vet-id="{{ vet.vet_id }}" data-vet-name="{{ vet.name }}">
+            <div class="doctor-image">
+                <img src="{{ vet.image_url }}" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+                <div class="price-tag"></div>
+                <div class="video-icon"></div>
+            </div>
+            <div class="doctor-info">
+                <h3 class="doctor-name">{{ vet.name }}</h3>
+                <p class="specialty" style="font-weight: bold;">{{ vet.specialty }}<span class="rating">{{ vet.rating }}</span></p>
+                <ul class="details">
+                    <li>{{ vet.clinic }}</li>
+                    <li>{{ vet.experience }} years experience</li>
+                    <li>Next available: {{ vet.availability }}</li>
+                    <li>{{ vet.accepting }}</li>
+                </ul>
+                {% if vet.reviews %}
+                    <p class="reviews" style="font-style: italic; color: #666; margin-top: 5px;">"{{ vet.reviews }}"</p>
+                {% endif %}
+                <div class="buttons">
+                    <button class="schedule-btn" onclick="openScheduleModal(this)">Schedule</button>
+                    <button class="profile-btn" onclick="viewProfile(this)">View Profile</button>
+                    <!-- Add Edit Profile button for the vet's own profile -->
+                    {% if current_user.is_authenticated and vet.user_id == current_user.id %}
+                    <a href="{{ url_for('edit_vet', vet_id=vet.vet_id) }}" class="edit-btn">Edit Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        <!-- Pagination links -->
+        <div class="pagination">
+            {% if vets.has_prev %}
+            <a href="{{ url_for('list_vets', page=vets.prev_num) }}" data-tooltip="Previous Page">{{ vets.prev_num }}</a>
+            {% endif %}
+            <a href="{{ url_for('list_vets', page=vets.page) }}" data-tooltip="Current Page" class="active">{{ vets.page }}</a>
+            {% if vets.has_next %}
+            <a href="{{ url_for('list_vets', page=vets.next_num) }}" data-tooltip="Next Page">{{ vets.next_num }}</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Schedule Modal -->
+<div id="scheduleModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <h3>Schedule Appointment with <span id="modalVetName"></span></h3>
+        <form id="scheduleForm" onsubmit="submitAppointment(event)">
+            <label for="appointmentDate">Select Date:</label>
+            <input type="date" id="appointmentDate" name="appointmentDate" required>
+
+            <label for="appointmentTime">Select Time:</label>
+            <select id="appointmentTime" name="appointmentTime" required>
+                <option value="09:00 AM">09:00 AM</option>
+                <option value="10:00 AM">10:00 AM</option>
+                <option value="11:00 AM">11:00 AM</option>
+                <option value="02:00 PM">02:00 PM</option>
+                <option value="03:00 PM">03:00 PM</option>
+            </select>
+
+            <label for="animalType">Animal Type:</label>
+            <input type="text" id="animalType" name="animalType" placeholder="e.g., Dog, Cow, Horse" required>
+
+            <label for="ownerName">Your Name:</label>
+            <input type="text" id="ownerName" name="ownerName" required>
+
+            <label for="ownerEmail">Your Email:</label>
+            <input type="email" id="ownerEmail" name="ownerEmail" required>
+
+            <button type="submit">Book Appointment</button>
+        </form>
+    </div>
+</div>
+
+<!-- Profile Modal -->
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeProfileModal()">×</span>
+        <h3>Profile of <span id="modalProfileVetName"></span></h3>
+        <div id="vetProfileDetails">
+            <p><strong>Specialty:</strong> <span id="modalVetSpecialty"></span></p>
+            <p><strong>Clinic:</strong> <span id="modalVetClinic"></span></p>
+            <p><strong>Experience:</strong> <span id="modalVetExperience"></span></p>
+            <p><strong>Availability:</strong> <span id="modalVetAvailability"></span></p>
+            <p><strong>Accepting:</strong> <span id="modalVetAccepting"></span></p>
+            <p><strong>Rating:</strong> <span id="modalVetRating"></span></p>
+        </div>
+    </div>
+</div>
+
+
+
+<div id="search-box" class="search-container">
+    <button class="close-btn" onclick="closeSearch()">X</button>
+    <h3>Search Animal</h3>
+    <input type="text" id="search-input" placeholder="Enter animal name..." oninput="fetchSearchResults()">
+    
+    <label for="sort">Sort by:</label>
+    <select id="sort" onchange="fetchSearchResults()">
+        <option value="price_asc">Price (Low to High)</option>
+        <option value="price_desc">Price (High to Low)</option>
+        <option value="rating_desc">Rating (High to Low)</option>
+        <option value="rating_asc">Rating (Low to High)</option>
+    </select>
+
+    <div class="search-results" id="search-results"></div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const cards = document.querySelectorAll(".doctor-card");
+
+    cards.forEach((card, index) => {
+        setTimeout(() => {
+            card.classList.add("show");
+        }, index * 200);
+    });
+});
+
+let currentVetId = null;
+
+function openScheduleModal(button) {
+    const card = button.closest('.doctor-card');
+    const vetName = card.getAttribute('data-vet-name');
+    currentVetId = card.getAttribute('data-vet-id');
+
+    document.getElementById('modalVetName').textContent = vetName;
+    document.getElementById('scheduleModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('scheduleModal').style.display = 'none';
+    document.getElementById('scheduleForm').reset();
+}
+
+function submitAppointment(event) {
+    event.preventDefault();
+
+    const appointmentDate = document.getElementById('appointmentDate').value;
+    const appointmentTime = document.getElementById('appointmentTime').value;
+    const animalType = document.getElementById('animalType').value;
+    const ownerName = document.getElementById('ownerName').value;
+    const ownerEmail = document.getElementById('ownerEmail').value;
+    const vetName = document.getElementById('modalVetName').textContent;
+
+    fetch('/book_appointment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            vetId: currentVetId,
+            vetName: vetName,
+            appointmentDate: appointmentDate,
+            appointmentTime: appointmentTime,
+            animalType: animalType,
+            ownerName: ownerName,
+            ownerEmail: ownerEmail
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            throw new Error(data.error);
+        }
+        closeModal();
+    })
+    .catch(error => {
+        console.error('Error booking appointment:', error);
+        alert('Failed to book appointment: ' + error.message);
+    });
+}
+
+function viewProfile(button) {
+    const card = button.closest('.doctor-card');
+    const vetName = card.getAttribute('data-vet-name');
+    const specialty = card.querySelector('.specialty').textContent.split('★')[0].trim();
+    const details = card.querySelectorAll('.details li');
+    const clinic = details[0].textContent;
+    const experience = details[1].textContent;
+    const availability = details[2].textContent.replace('Next available: ', '');
+    const accepting = details[3].textContent;
+    const rating = card.querySelector('.rating').textContent;
+
+    document.getElementById('modalProfileVetName').textContent = vetName;
+    document.getElementById('modalVetSpecialty').textContent = specialty;
+    document.getElementById('modalVetClinic').textContent = clinic;
+    document.getElementById('modalVetExperience').textContent = experience;
+    document.getElementById('modalVetAvailability').textContent = availability;
+    document.getElementById('modalVetAccepting').textContent = accepting;
+    document.getElementById('modalVetRating').textContent = rating;
+
+    document.getElementById('profileModal').style.display = 'flex';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    const scheduleModal = document.getElementById('scheduleModal');
+    const profileModal = document.getElementById('profileModal');
+    if (event.target === scheduleModal) {
+        closeModal();
+    }
+    if (event.target === profileModal) {
+        closeProfileModal();
+    }
+};
+
+let currentPage = 1;
+
+function openSearch() {
+    document.getElementById('search-box').classList.add('active');
+}
+
+function closeSearch() {
+    document.getElementById('search-box').classList.remove('active');
+}
+
+function fetchSearchResults() {
+    let query = document.getElementById("search-input").value;
+    let sortBy = document.getElementById("sort").value;
+
+    fetch('/search', {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            animal_name: query,
+            sort_by: sortBy,
+            page: currentPage
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        let resultsContainer = document.getElementById("search-results");
+        resultsContainer.innerHTML = "";
+
+        if (data.results.length === 0) {
+            resultsContainer.innerHTML = "<p>No results found.</p>";
+        } else {
+            data.results.forEach(item => {
+                resultsContainer.innerHTML += `<p><strong>${item[1]}</strong> - ${item[2]}, Price: $${item[3]}, Rating: ${item[4]}</p>`;
+            });
+        }
+    });
+}
+
+function changePage(offset) {
+    currentPage += offset;
+    fetchSearchResults();
+}
+</script>
+</body>
+{% endblock %}
+
+

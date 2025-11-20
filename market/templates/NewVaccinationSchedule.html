@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vaccination Schedule | Livestock Analytics</title>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet"/>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: 'hsl(95, 45%, 25%)',
+            accent: 'hsl(110, 55%, 45%)',
+            background: 'hsl(40, 20%, 97%)',
+            foreground: 'hsl(95, 40%, 15%)',
+          },
+          fontFamily: {
+            poppins: ['Poppins', 'sans-serif'],
+            inter: ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    .gradient-hero { background: linear-gradient(135deg, hsl(95, 45%, 25%), hsl(85, 35%, 35%)); }
+    .shadow-card { box-shadow: 0 4px 20px -2px hsl(95, 45%, 25%, 0.1); }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-fade-up { animation: fadeInUp 0.6s ease-out forwards; }
+  </style>
+</head>
+<body class="bg-background text-foreground font-inter">
+
+  <!-- Navbar -->
+  <nav class="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-300">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <a href="index.html" class="flex items-center gap-3">
+          <img src="https://livestockanalytics.com/hs-fs/hubfs/Website/Logos%20e%20%C3%ADconos/livestock.png" alt="Logo" class="h-10"/>
+          <span class="text-xl font-bold text-primary font-poppins hidden sm:block">Livestock Analytics</span>
+        </a>
+        <div class="hidden md:flex items-center space-x-8">
+          <a href="index.html#features" class="hover:text-primary">Features</a>
+          {% if session.user_id %}
+            <a href="/logout" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">Logout</a>
+          {% else %}
+            <a href="/login" class="px-4 py-2 bg-accent text-white rounded-md hover:bg-accent/90">Sign In</a>
+          {% endif %}
+        </div>
+        <button id="mobile-menu-btn" class="md:hidden p-2" onclick="toggleMobileMenu()">
+          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="fixed inset-0 bg-white z-50 pt-20 px-6 hidden md:hidden overflow-y-auto">
+    <button onclick="toggleMobileMenu()" class="absolute top-6 right-6">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <div class="space-y-6 text-center">
+      <a href="index.html#features" class="block text-lg">Features</a>
+      {% if session.user_id %}
+        <a href="/logout" class="block text-lg font-bold text-red-600">Logout</a>
+      {% else %}
+        <a href="/login" class="block text-lg font-bold text-accent">Sign In</a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <section class="pt-24 pb-12 gradient-hero text-white">
+    <div class="container mx-auto px-4 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold font-poppins mb-4 animate-fade-up">Vaccination Schedule</h1>
+      <p class="text-xl max-w-3xl mx-auto opacity-90 animate-fade-up" style="animation-delay: 0.2s">
+        Never miss a vaccine. Track, schedule, and get AI-powered recommendations for your herd.
+      </p>
+    </div>
+  </section>
+
+  <!-- Search & Filters -->
+  <section class="py-8 bg-background border-b">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row gap-4 items-center">
+        <input type="text" id="searchInput" placeholder="Search by Animal ID, Tag, or Breed..." 
+               class="flex-1 px-5 py-3 rounded-lg border border-gray-300 focus:border-accent focus:outline-none text-lg"/>
+        <button onclick="searchAnimals()" class="px-6 py-3 bg-accent text-white rounded-lg hover:bg-accent/90 font-medium">
+          Search
+        </button>
+        <a href="/vaccination/pdf" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium">
+          Export PDF
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <section class="py-12 container mx-auto px-4">
+    <div class="grid lg:grid-cols-3 gap-8">
+
+      <!-- Animal List -->
+      <div class="lg:col-span-1 space-y-4" id="animalList">
+        <!-- Filled by JS -->
+      </div>
+
+      <!-- Vaccination Timeline -->
+      <div class="lg:col-span-2 space-y-6" id="timeline">
+        <!-- Filled by JS -->
+      </div>
+    </div>
+
+    <!-- AI Vaccine Advisor -->
+    <div class="mt-12 p-6 bg-gradient-to-r from-accent/10 to-primary/10 rounded-xl shadow-card">
+      <h3 class="text-2xl font-bold font-poppins mb-3">AI Vaccine Advisor</h3>
+      <p class="text-muted-foreground mb-4">Ask about vaccines, diseases, or schedules.</p>
+      <div class="flex gap-3">
+        <input type="text" id="aiQuery" placeholder="e.g., FMD vaccine for cows in rainy season?" 
+               class="flex-1 px-4 py-3 rounded-lg border focus:border-accent focus:outline-none"/>
+        <button onclick="askAI()" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90">
+          Ask AI
+        </button>
+      </div>
+      <div id="aiResponse" class="mt-4 p-4 bg-white rounded-lg hidden"></div>
+    </div>
+  </section>
+
+  <script>
+    let animals = [], currentAnimal = null;
+
+    // Mobile Menu
+    function toggleMobileMenu() {
+      document.getElementById('mobile-menu').classList.toggle('hidden');
+    }
+
+    const isVet = {{ 'true' if current_user.role in ['vet', 'admin'] else 'false' }};
+
+    async function markAsDone(animalId, vaccineName) {
+      const res = await fetch('/api/schedule/done', { ... });
+      // ...
+    }
+    let animals = [], currentAnimal = null;
+
+    async function loadData() {
+      const res = await fetch('/api/vaccination');
+      const data = await res.json();
+      animals = data.animals;
+      renderAnimalList();
+      if (animals.length > 0) selectAnimal(animals[0].animal_id);
+    }
+
+    // Load Data
+    async function loadData() {
+      const res = await fetch('/api/vaccination');
+      const data = await res.json();
+      animals = data.animals;
+      renderAnimalList();
+      if (animals.length > 0) selectAnimal(animals[0].animal_id);
+    }
+
+    // Render Animal List
+    function renderAnimalList() {
+      const list = document.getElementById('animalList');
+      const filtered = animals.filter(a => 
+        a.animal_name?.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()) ||
+        a.tag?.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase()) ||
+        a.species?.toLowerCase().includes(document.getElementById('searchInput').value.toLowerCase())
+      );
+
+      list.innerHTML = filtered.map(animal => `
+        <div onclick="selectAnimal('${animal.animal_id}')" 
+             class="p-4 bg-white rounded-lg shadow-card cursor-pointer hover:border-accent hover:border-2 transition-all">
+          <div class="font-semibold">${animal.animal_name}</div>
+          <div class="text-sm text-muted-foreground">${animal.species || 'Unknown'} • Tag: ${animal.tag || '—'}</div>
+        </div>
+      `).join('');
+    }
+
+    // Select Animal
+    function selectAnimal(id) {
+      document.querySelectorAll('#animalList > div').forEach(el => el.classList.remove('border-accent', 'border-2'));
+      event?.target?.closest('div')?.classList.add('border-accent', 'border-2');
+
+      const animal = animals.find(a => a.animal_id == id);
+      currentAnimal = animal;
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = `
+        <h2 class="text-2xl font-bold font-poppins mb-6">${animal.animal_name} • ${animal.species || ''}</h2>
+        <div class="space-y-6">
+          ${animal.vaccines.map(v => `
+            <div class="flex items-center gap-4 p-4 bg-white rounded-lg shadow-card">
+              <div class="w-12 h-12 rounded-full ${v.status === 'done' ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'} flex items-center justify-center font-bold">
+                ${v.status === 'done' ? 'Check' : '!'}
+              </div>
+              <div class="flex-1">
+                <div class="font-semibold">${v.vaccine_name}</div>
+                <div class="text-sm text-muted-foreground">Age: ${v.age_bracket} • Due: ${v.next_due}</div>
+              </div>
+              <span class="text-sm font-medium ${v.status === 'done' ? 'text-green-600' : 'text-yellow-600'}">
+                ${v.status === 'done' ? 'Completed' : 'Upcoming'}
+              </span>
+              ${v.status !== 'done' && isVet ? `
+                <button onclick="markAsDone(${animal.animal_id}, '${v.vaccine_name}')" 
+                        class="ml-4 px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700">
+                  Mark Done
+                </button>
+              ` : ''}
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
+    // Search
+    function searchAnimals() {
+      renderAnimalList();
+    }
+    document.getElementById('searchInput').addEventListener('input', searchAnimals);
+
+    // Mark as Done (Vet only)
+    async function markAsDone(animal_id, vaccine_name) {
+      if (!confirm("Mark this vaccine as given today?")) return;
+      await fetch('/api/vaccination/done', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ animal_id, vaccine_name })
+      });
+      loadData();
+    }
+
+    // AI Advisor (Grok)
+    async function askAI() {
+      const query = document.getElementById('aiQuery').value;
+      if (!query) return;
+      const res = await fetch('/api/ai', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      const data = await res.json();
+      const response = document.getElementById('aiResponse');
+      response.classList.remove('hidden');
+      response.innerHTML = `<p class="font-medium">AI:</p><p class="mt-2">${data.response}</p>`;
+    }
+
+    // Init
+    document.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Event Summits</title>
+    <style>
+        /* Base Container Styling */
+        .demo-container {
+            display: flex;
+            width: 1000px;
+            height: 420px;
+            margin: auto;
+            background: #e9f4f9;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: absolute;
+            left: 80px;
+            /* BEGIN: Updated for auto-switch transition */
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out;
+            transform: translateX(100%);
+            opacity: 0;
+            /* END: Updated for auto-switch transition */
+        }
+
+        /* Hide all containers by default */
+        .demo-container {
+            display: none;
+        }
+        #demo-container-1 { top: 40px; }
+        #demo-container-2 { top: 40px; }
+        #demo-container-3 { top: 40px; }
+        #demo-container-4 { top: 40px; }
+
+        /* Show the active container */
+        .demo-container.active {
+            display: flex;
+            transform: translateX(0);
+            opacity: 1;
+        }
+        .demo-container.exiting {
+            opacity: 0;
+        }
+        .demo-container.exiting-left {
+            transform: translateX(-100%);
+        }
+        .demo-container.exiting-right {
+            transform: translateX(100%);
+        }
+
+        .demo-left,
+        .demo-right {
+            padding: 2rem;
+        }
+
+        .demo-left {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .demo-right {
+            width: 300px;
+            height: 450px;
+            position: absolute;
+            top: 0px;
+            left: 700px;
+            flex: 4;
+            background: #d8eaf1;
+            text-align: center;
+            border-left: 1px solid #b3d4e0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-radius: 0 16px 16px 0;
+        }
+
+        .demo-image-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 60px;
+            flex: 0 0 160px;
+        }
+
+        .demo-image-frame {
+            background: rgb(238, 235, 228);
+            padding: 10px;
+            border-radius: 50%;
+            width: 148px;
+            height: 148px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 60% 20% 60% 60%;
+            box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .demo-image-frame img {
+            width: 128%;
+            height: 128%;
+            object-fit: cover;
+            border-radius: 60% 20% 60% 60%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .demo-text {
+            width: 740px;
+        }
+
+        .demo-text h2 {
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+            color: #0c2544;
+            position: absolute;
+            left: 240px;
+            top: 60px;
+            font-weight: 650;
+            word-spacing: 3px;
+            line-height: 2.0rem;
+        }
+
+        .bullet-points {
+            position: relative;
+            width: 96%;
+            height: 120px;
+            margin-top: 0.5rem;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: rgb(63, 106, 158);
+            font-weight: 500;
+        }
+
+        .bullet-points li {
+            list-style: disc;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: #0c2544;
+        }
+
+        .demo-text h3 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #0c2544;
+            position: absolute;
+            top: 250px;
+            left: 20px;
+            word-spacing: 1px;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.9rem;
+            font-size: 0.95rem;
+            color: #0c2544;
+            position: absolute;
+            top: 300px;
+            font-size: 1.0rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .tick-icon {
+            width: 30px;
+            height: 22px;
+            background-color: rgb(7, 48, 92);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tick-icon svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        .register-now {
+            font-size: 1.05rem;
+            margin-bottom: 0.7rem;
+            color: #0c2544;
+            position: absolute;
+            top: 60px;
+            left: 40px;
+            line-height: 1.6rem;
+        }
+
+        .date {
+            position: absolute;
+            top: 130px;
+            left: 40px;
+            font-size: 1.3rem;
+            margin: 0;
+            color: #0c2544;
+            line-height: 1.8rem;
+        }
+
+        .time {
+            position: absolute;
+            top: 190px;
+            left: 70px;
+            font-size: 0.95rem;
+            color: #0c2544;
+            margin-bottom: 1rem;
+        }
+
+        .countdown {
+            font-size: 1.4rem;
+            color: #e53935;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            position: absolute;
+            top: 230px;
+            left: 50px;
+        }
+
+        .register-button {
+            background-color: #00c389;
+            color: white;
+            border: none;
+            padding: 0.8rem 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: background 0.3s ease;
+            position: absolute;
+            top: 300px;
+            left: 70px;
+            line-height: 1.2rem;
+            width: 150px;
+            transition: none;
+        }
+
+        .register-button:hover {
+            background-color: #00a674;
+        }
+
+        .register-button:disabled {
+            background-color: #a5d6a7;
+        }
+
+        /* Base Dialog Styling */
+        .dialog {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            border-radius: 6px;
+        }
+
+        .dialog.show {
+            display: flex;
+        }
+
+        .dialog-content {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            width: 700px;
+            max-width: 95%;
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .dialog-image {
+            width: 50%;
+            height: auto;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 8px;
+        }
+
+        .dialog-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+            padding: 10px;
+        }
+
+        .dialog-text h3 {
+            margin-bottom: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .dialog-text p {
+            font-size: 1rem;
+            margin-bottom: 15px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .cta-button {
+            padding: 12px 25px;
+            background-color: #ff6200;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            text-transform: uppercase;
+            align-self: center;
+            transition: none;
+        }
+
+        .cta-button:hover {
+            background-color: #e55a00;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 20px;
+            background: #666;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- First Demo Container (Livestock Summit) -->
+    <div class="demo-container" id="demo-container-1">
+        <div class="demo-left">
+            <div class="demo-image-wrapper">
+                <div class="demo-image-frame">
+                    <img src="https://images.unsplash.com/photo-1635094546284-a5055e8a37c2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGxpdmVzdG9jayUyMGFubnVhbCUyMGV2ZW50fGVufDB8fDB8fHww" alt="Instructor" />
+                </div>
+            </div>
+            <div class="demo-text">
+                <h2>Attend a Free Livestock and<br>
+                    Farmer Summit Annual Event</h2>
+                <ul class="bullet-points">
+                    <li style="position: absolute; top: 110px; left: 240px;">Learn about Best Livestock Farming pracices</li>
+                    <li style="position: absolute; top: 140px; left: 240px; font-weight: 540;">Attend & Gain vast Knowledge in Livestock Farming.</li>
+                </ul>
+                <h3>Earn Perks and Benefits from this Event to a farmer and their Livestock</h3>
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Live Farmer-Led Session
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Know More about Livetsock in Depth
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Details on Best Animal Practices <br> & Technologies
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Learn about Domestic, Wild, <br> Aquatic Animals etc
+                    </div>
+                </div>
+            </div>
+            <div class="demo-right">
+                <p class="register-now">Register for the upcoming <br>
+                    annual event now</p>
+                <h3 class="date">Wednesday, 23 Aug <br> 2027</h3>
+                <p class="time">03:30 PM to 04:30 PM</p>
+                <div class="countdown" id="countdown-1">
+                    <span>⏱</span> 00 : 00 : 00
+                </div>
+                <button class="register-button" id="register-button-1">REGISTER FOR <br> THIS EVENT</button>
+
+                <div class="dialog" id="dialog-1">
+                    <div class="dialog-content">
+                        <span class="close-btn" id="close-btn-1">×</span>
+                        <img src="https://images.unsplash.com/photo-1635094546284-a5055e8a37c2?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGxpdmVzdG9jayUyMGFubnVhbCUyMGV2ZW50fGVufDB8fDB8fHww" alt="Person at computer" class="dialog-image">
+                        <div class="dialog-text">
+                            <h3>Attend and get a Certificate of Participation!</h3>
+                            <p>Our Practical Learning Approach helps you learn the most in-demand tech skills and work on real-life projects.</p>
+                            <button class="cta-button" id="close-dialog-btn-1">REGISTER FOR FREE DEMO</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Demo Container (Tech Summit) -->
+    <div class="demo-container" id="demo-container-2">
+        <div class="demo-left">
+            <div class="demo-image-wrapper">
+                <div class="demo-image-frame">
+                    <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Tech Summit" />
+                </div>
+            </div>
+            <div class="demo-text">
+                <h2>Join the Global Tech<br>
+                    Innovation Summit 2028</h2>
+                <ul class="bullet-points">
+                    <li style="position: absolute; top: 110px; left: 240px;">Discover the latest in tech advancements</li>
+                    <li style="position: absolute; top: 140px; left: 240px; font-weight: 540;">Network with industry leaders and innovators</li>
+                </ul>
+                <h3>Unlock Opportunities to Collaborate and Innovate</h3>
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Keynote Speeches by Tech Pioneers
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Hands-On Tech Workshops
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Explore AI and Robotics <br> Innovations
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Startup Pitch Sessions
+                    </div>
+                </div>
+            </div>
+            <div class="demo-right">
+                <p class="register-now">Register for the upcoming <br>
+                    tech summit now</p>
+                <h3 class="date">Friday, 15 Jun <br> 2028</h3>
+                <p class="time">09:00 AM to 05:00 PM</p>
+                <div class="countdown" id="countdown-2">
+                    <span>⏱</span> 00 : 00 : 00
+                </div>
+                <button class="register-button" id="register-button-2">LEARN MORE <br> ABOUT THIS EVENT</button>
+
+                <div class="dialog" id="dialog-2">
+                    <div class="dialog-content">
+                        <span class="close-btn" id="close-btn-2">×</span>
+                        <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Tech Summit" class="dialog-image">
+                        <div class="dialog-text">
+                            <h3>Exclusive Access to Tech Summit 2028!</h3>
+                            <p>Join us to explore cutting-edge technologies and network with global innovators.</p>
+                            <button class="cta-button" id="close-dialog-btn-2">REGISTER NOW</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Third Demo Container (Health Expo) -->
+    <div class="demo-container" id="demo-container-3">
+        <div class="demo-left">
+            <div class="demo-image-wrapper">
+                <div class="demo-image-frame">
+                    <img src="https://images.unsplash.com/photo-1532938911079-1b8924a75772?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Health Expo" />
+                </div>
+            </div>
+            <div class="demo-text">
+                <h2>Explore the Annual<br>
+                    Global Health Expo 2029</h2>
+                <ul class="bullet-points">
+                    <li style="position: absolute; top: 110px; left: 240px;">Learn about advancements in healthcare</li>
+                    <li style="position: absolute; top: 140px; left: 240px; font-weight: 540;">Attend wellness workshops and seminars</li>
+                </ul>
+                <h3>Discover New Ways to Improve Health and Wellbeing</h3>
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Expert-Led Health Talks
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Free Health Screenings
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Fitness and Nutrition <br> Workshops
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Mental Health Awareness
+                    </div>
+                </div>
+            </div>
+            <div class="demo-right">
+                <p class="register-now">Register for the upcoming <br>
+                    health expo now</p>
+                <h3 class="date">Saturday, 20 Apr <br> 2029</h3>
+                <p class="time">10:00 AM to 06:00 PM</p>
+                <div class="countdown" id="countdown-3">
+                    <span>⏱</span> 00 : 00 : 00
+                </div>
+                <button class="register-button" id="register-button-3">LEARN MORE <br> ABOUT THIS EVENT</button>
+
+                <div class="dialog" id="dialog-3">
+                    <div class="dialog-content">
+                        <span class="close-btn" id="close-btn-3">×</span>
+                        <img src="https://images.unsplash.com/photo-1532938911079-1b8924a75772?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Health Expo" class="dialog-image">
+                        <div class="dialog-text">
+                            <h3>Join the Global Health Expo 2029!</h3>
+                            <p>Take part in wellness activities and learn from health experts worldwide.</p>
+                            <button class="cta-button" id="close-dialog-btn-3">REGISTER NOW</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Fourth Demo Container (Eco Festival) -->
+    <div class="demo-container" id="demo-container-4">
+        <div class="demo-left">
+            <div class="demo-image-wrapper">
+                <div class="demo-image-frame">
+                    <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Eco Festival" />
+                </div>
+            </div>
+            <div class="demo-text">
+                <h2>Celebrate the Eco-Friendly<br>
+                    Sustainability Festival 2030</h2>
+                <ul class="bullet-points">
+                    <li style="position: absolute; top: 110px; left: 240px;">Discover sustainable living practices</li>
+                    <li style="position: absolute; top: 140px; left: 240px; font-weight: 540;">Join eco-friendly workshops and talks</li>
+                </ul>
+                <h3>Be Part of a Greener Future with Hands-On Activities</h3>
+                <div class="features">
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Eco-Friendly Product Demos
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Sustainable Gardening Tips
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Zero-Waste Lifestyle <br> Workshops
+                    </div>
+                    <div class="feature-item">
+                        <span class="tick-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                        </span>
+                        Renewable Energy Talks
+                    </div>
+                </div>
+            </div>
+            <div class="demo-right">
+                <p class="register-now">Register for the upcoming <br>
+                    eco festival now</p>
+                <h3 class="date">Sunday, 10 Aug <br> 2030</h3>
+                <p class="time">11:00 AM to 07:00 PM</p>
+                <div class="countdown" id="countdown-4">
+                    <span>⏱</span> 00 : 00 : 00
+                </div>
+                <button class="register-button" id="register-button-4">LEARN MORE <br> ABOUT THIS EVENT</button>
+
+                <div class="dialog" id="dialog-4">
+                    <div class="dialog-content">
+                        <span class="close-btn" id="close-btn-4">×</span>
+                        <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587205?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3" alt="Eco Festival" class="dialog-image">
+                        <div class="dialog-text">
+                            <h3>Be Part of the Eco Festival 2030!</h3>
+                            <p>Learn sustainable practices and contribute to a greener planet.</p>
+                            <button class="cta-button" id="close-dialog-btn-4">REGISTER NOW</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Declare updateCountdown variables for each container
+        let updateCountdown = {};
+
+        // Function to initialize dialog functionality for a given container
+        function setupDialog(containerIndex, totalContainers) {
+            const registerButton = document.getElementById(`register-button-${containerIndex}`);
+            const dialog = document.getElementById(`dialog-${containerIndex}`);
+            const closeBtn = document.getElementById(`close-btn-${containerIndex}`);
+            const closeDialogBtn = document.getElementById(`close-dialog-btn-${containerIndex}`);
+
+            if (!registerButton || !dialog || !closeBtn || !closeDialogBtn) {
+                console.error(`Dialog elements not found for container ${containerIndex}:`, { registerButton, dialog, closeBtn, closeDialogBtn });
+                return;
+            }
+
+            registerButton.addEventListener('click', () => {
+                console.log(`Register button ${containerIndex} clicked`);
+                if (containerIndex === 1 && registerButton.disabled) {
+                    console.log(`Button ${containerIndex} is disabled, dialog not shown`);
+                    return;
+                }
+                dialog.classList.add('show');
+                console.log(`Dialog ${containerIndex} classList after click:`, dialog.classList.toString());
+            });
+
+            closeBtn.addEventListener('click', () => {
+                dialog.classList.remove('show');
+                console.log(`Dialog ${containerIndex} closed via close button`);
+            });
+
+            closeDialogBtn.addEventListener('click', () => {
+                dialog.classList.remove('show');
+                console.log(`Dialog ${containerIndex} closed via Register button`);
+            });
+        }
+
+        // Function to initialize the countdown timer for a given container
+        function startCountdown(containerIndex, targetDate, totalContainers) {
+            const countdown = document.getElementById(`countdown-${containerIndex}`);
+            const registerButton = document.getElementById(`register-button-${containerIndex}`);
+            const countDownDate = new Date(targetDate).getTime();
+
+            if (!countdown || !registerButton) {
+                console.error(`Timer elements not found for container ${containerIndex}:`, { countdown, registerButton });
+                return;
+            }
+
+            if (isNaN(countDownDate)) {
+                console.error(`Invalid target date for container ${containerIndex}:`, targetDate);
+                return;
+            }
+
+            updateCountdown[containerIndex] = setInterval(() => {
+                const now = new Date().getTime();
+                const distance = countDownDate - now;
+
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                if (distance < 0) {
+                    clearInterval(updateCountdown[containerIndex]);
+                    countdown.innerHTML = "EXPIRED";
+                    registerButton.disabled = true;
+                    registerButton.style.background = '#a5d6a7';
+                    console.log(`Timer expired for container ${containerIndex}, button disabled`);
+                } else {
+                    countdown.innerHTML = `<span>⏱</span> ${String(days).padStart(2, '0')} : ${String(hours).padStart(2, '0')} : ${String(minutes).padStart(2, '0')} : ${String(seconds).padStart(2, '0')}`;
+                    registerButton.disabled = false;
+                    console.log(`Timer ticking for container ${containerIndex}:`, days, hours, minutes, seconds);
+                }
+            }, 1000);
+            console.log(`Timer started for container ${containerIndex} with target:`, new Date(targetDate).toISOString());
+        }
+
+        // Target dates for each event
+        const targetDates = {
+            1: "2027-08-23T15:30:00Z",
+            2: "2028-06-15T09:00:00Z",
+            3: "2029-04-20T10:00:00Z",
+            4: "2030-08-10T11:00:00Z"
+        };
+
+        // Auto-switch logic only
+        document.addEventListener('DOMContentLoaded', () => {
+            const containers = document.querySelectorAll('.demo-container');
+            const totalContainers = containers.length;
+            let currentIndex = 1;
+
+            function showContainer(index) {
+                const currentContainer = document.getElementById(`demo-container-${currentIndex}`);
+                currentContainer.classList.remove('active');
+                currentContainer.classList.add('exiting-left');
+
+                setTimeout(() => {
+                    currentContainer.classList.remove('exiting-left');
+                }, 800); // Match transition duration
+
+                currentIndex = index;
+                const newContainer = document.getElementById(`demo-container-${index}`);
+                newContainer.classList.remove('exiting-left');
+                newContainer.classList.add('active');
+                console.log(`Auto-switched to container ${index}`);
+            }
+
+            for (let i = 1; i <= totalContainers; i++) {
+                setupDialog(i, totalContainers);
+                startCountdown(i, targetDates[i], totalContainers);
+            }
+
+            showContainer(currentIndex);
+
+            let autoSwitch = setInterval(() => {
+                currentIndex = (currentIndex < totalContainers) ? currentIndex + 1 : 1;
+                showContainer(currentIndex);
+                console.log(`Auto-switched to container ${currentIndex} after 60 seconds`);
+            }, 60000);
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

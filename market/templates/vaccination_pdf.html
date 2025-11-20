@@ -1,0 +1,30 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body { font-family: Arial; margin: 20px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+  </style>
+</head>
+<body>
+  <h1>Vaccination Schedule</h1>
+  <p>Generated: {{ now }}</p>
+  <table>
+    <tr><th>Animal</th><th>Species</th><th>Vaccine</th><th>Next Due</th></tr>
+    {% for a in animals %}
+      {% for v in a.vaccines %}
+        <tr>
+          <td>{{ a.animal_name }}</td>
+          <td>{{ a.species or '—' }}</td>
+          <td>{{ v.vaccine_name }}</td>
+          <td>{{ v.next_due }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  </table>
+</body>
+</html>

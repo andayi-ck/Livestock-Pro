@@ -1,0 +1,46 @@
+
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+
+            .image-container {
+                width: 80%;
+                overflow: hidden; /* Prevents overflow issues */
+            }
+
+            /* Ensure the image is responsive */
+            img {
+                max-width: 100%; /* Limits the image width to its container */
+                height: auto;    /* Maintains aspect ratio */
+                display: block;  /* Removes any inline spacing issues */
+                margin: 0 auto;  /* Centers the image horizontally */
+            }
+
+            /* Optional: Media queries for specific breakpoints */
+            @media (max-width: 768px) {
+                img {
+                    max-width: 90%; /* Slightly reduces width on tablets */
+                }
+            }
+
+            @media (max-width: 480px) {
+                img {
+                    max-width: 100%; /* Full width on mobile */
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="image-container">
+            <img src="https://careers.caterpillar.com/media/vxzmb41d/talent_community-2x.jpg?width=1440&height=521&v=1db93493366c370&rmode=crop&format=webp&quality=75">
+        </div>
+    </body>
+</html>
+
+
+
+
+
+

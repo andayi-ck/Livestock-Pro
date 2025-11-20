@@ -1,0 +1,94 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenya Vet Clinic Finder</title>
+    <!-- Include Folium CSS/JS dependencies -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.7.1/dist/leaflet.js"></script>
+    <!-- Optional: Add Leaflet.glyphicon for icons if used -->
+     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.css">
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/MarkerCluster.Default.css">
+
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f8f9fa; }
+        .container { max-width: 1000px; margin: auto; background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .search-form { margin-bottom: 25px; padding: 20px; background-color: #e9ecef; border-radius: 5px; border: 1px solid #ced4da; }
+        .search-form label { display: block; margin-bottom: 8px; font-weight: bold; }
+        .search-form input[type="text"] { width: calc(80% - 12px); padding: 10px; margin-right: 10px; border: 1px solid #ced4da; border-radius: 4px; }
+        .search-form button { padding: 10px 18px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 4px; font-size: 1em; }
+        .search-form button:hover { background-color: #0056b3; }
+        .results { margin-top: 25px; }
+        .results h2, .map-section h2 { border-bottom: 2px solid #dee2e6; padding-bottom: 10px; margin-bottom: 15px; }
+        .result-item { border: 1px solid #ddd; padding: 12px 15px; margin-bottom: 12px; border-radius: 4px; background-color: #fff; transition: box-shadow 0.2s ease-in-out; }
+        .result-item:hover { box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+        .result-item h3 { margin-top: 0; margin-bottom: 8px; color: #0056b3; }
+        .result-item p { margin-bottom: 5px; line-height: 1.5; }
+        .map-section { margin-top: 30px; }
+        .map-container { height: 550px; /* Adjust height as needed */ width: 100%; border: 1px solid #ccc; border-radius: 5px; box-shadow: 0 1px 5px rgba(0,0,0,0.1); }
+        .no-results { color: #6c757d; font-style: italic; background-color: #f8f9fa; padding: 15px; border-radius: 4px; text-align: center; }
+        /* Make Folium map responsive */
+        .leaflet-container { width: 100% !important; height: 100% !important; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Kenya Vet Clinic Finder</h1>
+
+        <div class="search-form">
+            <form action="/search" method="post">
+                <label for="location_query">Enter County, Town, or Clinic Name:</label>
+                <input type="text" id="location_query" name="location_query" value="{{ query | default('', true) }}" placeholder="e.g., Nairobi, Nakuru Town, Happy Paws...">
+                <button type="submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span> Search</button>
+            </form>
+        </div>
+
+        <div class="results">
+            <h2>Search Results</h2>
+            {% if results is not none %}
+                {% if results %}
+                    <p>Found {{ results | length }} matching clinic(s). Corresponding counties are highlighted on the map.</p>
+                    {% for clinic in results %}
+                        <div class="result-item">
+                            <h3>{{ clinic.Name }}</h3>
+                            <p>
+                                <strong>County:</strong> {{ clinic.County }}<br>
+                                <strong>Town:</strong> {{ clinic.Town | default('N/A', true) }}<br>
+                                <strong>Contact:</strong> {{ clinic.Contact | default('N/A', true) }}
+                                {% if clinic.Latitude and clinic.Longitude %}
+                                <br><small><i>Location available on map</i></small>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                     {% if query %} {# Only show 'no results' if a search was actually performed #}
+                        <p class="no-results">No clinics found matching '{{ query }}'. Try a broader term (e.g., just the county name).</p>
+                     {% else %}
+                         <p class="no-results">Enter a location or clinic name above and click Search.</p>
+                     {% endif %}
+                {% endif %}
+            {% else %}
+                 <p class="no-results">Enter a location or clinic name above and click Search.</p>
+            {% endif %}
+        </div>
+
+        <div class="map-section">
+            <h2>Location Map</h2>
+            <p>View clinic locations and highlighted counties based on your search.</p>
+            <div class="map-container">
+                <!-- The map HTML generated by Folium will be injected here -->
+                {{ map_html | safe }}
+            </div>
+        </div>
+
+    </div>
+    <!-- Optional JS for Bootstrap features or Marker Clusters if used -->
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.1/leaflet.markercluster.js"></script>
+</body>
+</html>
